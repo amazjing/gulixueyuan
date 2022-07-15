@@ -1,0 +1,14 @@
+1、nginx
+http://nginx.org/en/download.html
+
+2、nodejs
+http://nodejs.cn/download/
+
+3、vscode
+https://code.visualstudio.com/
+
+4、canal
+https://github.com/alibaba/canal/releases/download/canal-1.1.4/canal.deployer-1.1.4.tar.gz
+
+5、jenkins
+https://jenkins.io/index.html
