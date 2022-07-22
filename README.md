@@ -173,3 +173,119 @@ spring.datasource.password=123456
 
 
 
+### 2.4 创建实体类以及Mapper
+
+```java
+package com.ama.mpdemo1010.entity;
+
+import lombok.Data;
+
+/**
+ * 2022/7/20 20:24
+ *
+ * @Description
+ * @Author WangWenZhe
+ */
+@Data
+public class User {
+    private Long id;
+    private String name;
+    private Integer age;
+    private String email;
+}
+```
+
+```java
+package com.ama.mpdemo1010.mapper;
+
+import com.ama.mpdemo1010.entity.User;
+import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import org.springframework.stereotype.Repository;
+//不使用@Repository会导致使用@Autowired时，找不到对应的bean，出现爆红错误;
+//因为类是动态创建的，但是程序可以正确的执行。为了避免报错，可以在dao层的接口上添加@Repository注解。
+@Repository
+public interface UserMapper extends BaseMapper<User> {
+}
+```
+
+
+
+### 2.5 功能测试
+
+在test文件夹中进行测试，查看所有用户数据。
+
+```java
+package com.ama.mpdemo1010;
+
+import com.ama.mpdemo1010.entity.User;
+import com.ama.mpdemo1010.mapper.UserMapper;
+import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
+
+import java.util.List;
+
+@SpringBootTest
+class Mpdemo1010ApplicationTests {
+
+    @Autowired
+    private UserMapper userMapper;
+
+    //查询User中的所有数据
+    @Test
+    void contextLoads() {
+        List<User> users = userMapper.selectList(null);
+        System.out.println(users);
+    }
+
+}
+```
+
+### 2.6 配置日志
+
+```properties
+#mybatis日志
+mybatis-plus.configuration.log-impl=org.apache.ibatis.logging.stdout.StdOutImpl
+```
+
+![image-20220722173913653](http://typora-imagelist.oss-cn-qingdao.aliyuncs.com/image-20220722173913653.png)
+
+
+
+## 3. MybatisPlus-insert
+
+### 3.1 insert方法
+
+在单元测试类中增加insert方法
+
+```java
+/**
+     * 添加操作
+     */
+    @Test
+    void insertUser() {
+        User user = new User();
+        user.setName("Ama");
+        user.setAge(18);
+        user.setEmail("Ama@qq.com");
+        int result = userMapper.insert(user);
+        System.out.println(result);//影响的行数
+        System.out.println("insert:" + user);//id自动回填
+    }
+```
+
+执行该方法后，控制台输出：
+
+![image-20220722180004921](http://typora-imagelist.oss-cn-qingdao.aliyuncs.com/image-20220722180004921.png)
+
+不需要给id赋值(主键)，MybatisPlus会自动生成一个全局唯一的19位的id值。
+
+
+
+### 3.2 主键策略
+
+1. **ID_WORKER**：MyBatis-Plus默认的主键策略是：ID_WORKER 全局唯一ID
+
+   参考资料：分布式系统唯一**ID**生成方案汇总：https://www.cnblogs.com/haoxinyue/p/5208136.html
+
+2. 
