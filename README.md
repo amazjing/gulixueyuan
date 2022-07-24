@@ -288,4 +288,64 @@ mybatis-plus.configuration.log-impl=org.apache.ibatis.logging.stdout.StdOutImpl
 
    参考资料：分布式系统唯一**ID**生成方案汇总：https://www.cnblogs.com/haoxinyue/p/5208136.html
 
-2. 
+2. 自增策略
+
+   - 要想主键自增需要配置如下主键策略
+
+     - 需要在创建数据表的时候设置主键自增
+     - 实体字段中配置 @TableId(type = IdType.AUTO)
+
+     ```java
+     @TableId(type = IdType.AUTO)
+     private Long id;
+     ```
+
+要想影响所有实体的配置，可以设置全局主键配置
+
+```java
+#全局设置主键生成策略
+mybatis-plus.global-config.db-config.id-type=auto
+```
+
+其它主键策略：分析 IdType 源码可知
+
+```java
+@Getter
+public enum IdType {
+    /**
+     * 数据库ID自增
+     */
+    AUTO(0),
+    /**
+     * 该类型为未设置主键类型
+     */
+    NONE(1),
+    /**
+     * 用户输入ID
+     * 该类型可以通过自己注册自动填充插件进行填充
+     */
+    INPUT(2),
+
+    /* 以下3种类型、只有当插入对象ID 为空，才自动填充。 */
+    /**
+     * 全局唯一ID (idWorker)
+     */
+    ID_WORKER(3),
+    /**
+     * 全局唯一ID (UUID)
+     */
+    UUID(4),
+    /**
+     * 字符串全局唯一ID (idWorker 的字符串表示)
+     */
+    ID_WORKER_STR(5);
+
+    private int key;
+
+    IdType(int key) {
+        this.key = key;
+    }
+```
+
+
+
