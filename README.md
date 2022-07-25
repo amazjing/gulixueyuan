@@ -349,3 +349,272 @@ public enum IdType {
 
 
 
+## 4. MybatisPlus-update
+
+### 4.1 根据Id更新操作
+
+> 注意：update时生成的sql自动是动态sql：UPDATE user SET age=? WHERE id=?
+
+```java
+/**
+     * 修改操作
+     */
+    @Test
+    void updateUser() {
+        User user = new User();
+        user.setId(2L);
+        user.setAge(30);
+        int row = userMapper.updateById(user);
+        System.out.println(row);//影响的行数
+    }
+```
+
+
+
+### 4.2 自动填充
+
+项目中经常会遇到一些数据，每次都使用相同的方式填充，例如记录的创建时间，更新时间等。
+
+我们可以使用MyBatis Plus的自动填充功能，完成这些字段的赋值工作：
+
+
+
+#### 4.2.1 数据库表中添加自动填充字段
+
+在User表中添加datetime类型的新的字段 create_time、update_time
+
+
+
+#### 4.2.2 实体上添加注解
+
+```java
+@Data
+public class User {
+    //IdType.ID_WORKER:MybatisPlus自带策略，生成19位值，数字类型使用这种策略，比如Long
+    //IdType.ID_WORKER_STR:生成19位字符串类型的值，比如String
+    //IdType.AUTO表示自动增长
+    @TableId(type = IdType.AUTO)
+    private Long id;
+    private String name;
+    private Integer age;
+    private String email;
+    //当创建一个新的对象时，自动填充创建时间和更新时间
+    @TableField(fill = FieldFill.INSERT)
+    private Date createTime;
+    @TableField(fill = FieldFill.INSERT_UPDATE)
+    private Date updateTime;
+}
+```
+
+
+
+#### 4.2.3 实现元对象处理器接口
+
+```java
+package com.ama.mpdemo1010.handler;
+
+import com.baomidou.mybatisplus.core.handlers.MetaObjectHandler;
+import org.apache.ibatis.reflection.MetaObject;
+import org.springframework.stereotype.Component;
+
+import java.util.Date;
+
+/**
+ * 实现公共字段自动写入
+ *
+ * @author WangWenZhe
+ * @date 2020/7/20
+ */
+@Component
+public class MyMetaObjectHandler implements MetaObjectHandler {
+
+    /**
+     * 在执行插入操作之前执行
+     *
+     * @param metaObject
+     */
+    @Override
+    public void insertFill(MetaObject metaObject) {
+        this.setFieldValByName("createTime", new Date(), metaObject);
+        this.setFieldValByName("updateTime", new Date(), metaObject);
+    }
+
+    /**
+     * 在执行更新操作之前执行
+     *
+     * @param metaObject
+     */
+    @Override
+    public void updateFill(MetaObject metaObject) {
+        this.setFieldValByName("updateTime", new Date(), metaObject);
+    }
+}
+```
+
+
+
+#### 4.2.4 总结
+
+**实现自动填充的步骤：**
+
+1. 在实体类上添加注解@TableField(fill = FieldFill.INSERT)和@TableField(fill = FieldFill.INSERT_UPDATE)
+2. 实现元对象处理器接口；实现MetaObjectHandler接口，重写里面的insertFill和updateFill方法
+
+以上两步实现后，可对新增的数据或者修改的数据自动添加值，无需再对一些默认数据进行赋值。
+
+
+
+### 4.3 乐观锁
+
+**主要解决：**丢失更新；多个人同时修改同一数据，最后提交更新的把之前的提交数据覆盖。
+
+**主要适用场景：**当要更新一条记录的时候，希望这条记录没有被别人更新，也就是说实现线程安全的数据更新
+
+**解决方案：**
+
+- 悲观锁：当其中一个更新数据时，其他人不能更新数据。串行。
+- 乐观锁：
+  - 取出记录时，获取当前version
+  - 更新时，带上这个version
+  - 执行更新时， set version = newVersion where version = oldVersion
+  - 如果version不对，就更新失败
+
+
+
+#### 4.3.1 数据库中添加version字段
+
+```mysql
+ALTER TABLE `user` ADD COLUMN `version` INT
+```
+
+
+
+#### 4.3.2 实体类添加version字段
+
+并添加 @Version 注解
+
+```java
+@Version
+@TableField(fill = FieldFill.INSERT)
+private Integer version;
+```
+
+
+
+#### 4.3.3 元对象处理器接口添加version的insert默认值
+
+```java
+package com.ama.mpdemo1010.handler;
+
+import com.baomidou.mybatisplus.core.handlers.MetaObjectHandler;
+import org.apache.ibatis.reflection.MetaObject;
+import org.springframework.stereotype.Component;
+
+import java.util.Date;
+
+/**
+ * 实现公共字段自动写入
+ *
+ * @author WangWenZhe
+ * @date 2020/7/20
+ */
+@Component
+public class MyMetaObjectHandler implements MetaObjectHandler {
+
+    /**
+     * 在执行插入操作之前执行
+     *
+     * @param metaObject
+     */
+    @Override
+    public void insertFill(MetaObject metaObject) {
+        this.setFieldValByName("createTime", new Date(), metaObject);
+        this.setFieldValByName("updateTime", new Date(), metaObject);
+        this.setFieldValByName("version", 1, metaObject);
+    }
+
+    /**
+     * 在执行更新操作之前执行
+     *
+     * @param metaObject
+     */
+    @Override
+    public void updateFill(MetaObject metaObject) {
+        this.setFieldValByName("updateTime", new Date(), metaObject);
+    }
+}
+```
+
+
+
+#### 4.3.4 配置MybatisPlusConfig乐观锁插件
+
+新建MybatisPlusConfig类，将启动类上的@MapperScan注解放在MybatisPlusConfig类上。
+
+```java
+package com.ama.mpdemo1010.config;
+
+import com.baomidou.mybatisplus.extension.plugins.OptimisticLockerInterceptor;
+import org.mybatis.spring.annotation.MapperScan;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+
+/**
+ * 2022/7/25 23:05
+ *
+ * @Description 乐观锁插件
+ * @Author WangWenZhe
+ */
+@Configuration
+@MapperScan("com.ama.mpdemo1010.mapper")
+public class MybatisPlusConfig {
+    /**
+     * 乐观锁插件
+     */
+    @Bean
+    public OptimisticLockerInterceptor optimisticLockerInterceptor() {
+        return new OptimisticLockerInterceptor();
+    }
+}
+```
+
+
+
+#### 4.3.6 测试
+
+```java
+/**
+     * 测试乐观锁
+     */
+    @Test
+    void testOptimisticLock() {
+        //根据Id查询用户
+        User user = userMapper.selectById(1550420141828943876L);
+        //更新用户年龄
+        user.setAge(31);
+        //更新用户
+        int row = userMapper.updateById(user);
+    }
+```
+
+新添加的数据的version值为1，修改后，version值为2。
+
+
+
+#### 4.3.5 总结
+
+**实现乐观锁的步骤：**
+
+1. 在表中增加int类型的version字段
+2. 在实体类中添加version字段，并在该字段上添加@Version和@TableField(fill = FieldFill.INSERT)注解。
+3. 在元对象处理器接口（继承的MetaObjectHandler类）添加version的insert默认值。
+4. 新建MybatisPlusConfig类，并将@MapperScan注解从启动类放到该类中，再添加@Configuration注解。
+
+
+
+## 5. MybatisPlus-select
+
+
+
+
+

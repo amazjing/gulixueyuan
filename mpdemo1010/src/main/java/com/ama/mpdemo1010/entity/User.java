@@ -1,8 +1,9 @@
 package com.ama.mpdemo1010.entity;
 
-import com.baomidou.mybatisplus.annotation.IdType;
-import com.baomidou.mybatisplus.annotation.TableId;
+import com.baomidou.mybatisplus.annotation.*;
 import lombok.Data;
+
+import java.util.Date;
 
 /**
  * 2022/7/20 20:24
@@ -20,4 +21,15 @@ public class User {
     private String name;
     private Integer age;
     private String email;
+    //当创建一个新的对象时，自动填充创建时间和更新时间
+    @TableField(fill = FieldFill.INSERT)
+    private Date createTime;
+    @TableField(fill = FieldFill.INSERT_UPDATE)
+    private Date updateTime;
+    /**
+     * 版本号
+     */
+    @Version
+    @TableField(fill = FieldFill.INSERT)
+    private Integer version;
 }
