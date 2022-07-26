@@ -1038,3 +1038,95 @@ LambdaUpdateWrapper ： Lambda 更新封装Wrapper
 
 ## 9. 谷粒学苑-数据库设计
 
+### 9.1 创建数据库
+
+1. 新建数据库：guli_edu
+2. 执行guli_edu.sql脚本
+
+
+
+### 9.2 数据库设计规约
+
+以下规约只针对本模块，更全面的文档参考《阿里巴巴Java开发手册》：五、MySQL数据库
+
+1. 库名与应用名称尽量一致
+
+2. 表名、字段名必须使用小写字母或数字，禁止出现数字开头，
+
+3. 表名不使用复数名词
+
+4. 表的命名最好是加上“业务名称_表的作用”。如，edu_teacher
+
+5. 表必备三字段：id, gmt_create, gmt_modified
+
+   **说明：**
+
+   其中 id 必为主键，类型为 bigint unsigned、单表时自增、步长为 1。（如果使用分库分表集群部署，则id类型为verchar，非自增，业务中使用分布式id生成器）gmt_create, gmt_modified 的类型均为datetime类型，前者现在时表示主动创建，后者过去分词表示被动更新。
+
+6. 单表行数超过 500 万行或者单表容量超过 2GB，才推荐进行分库分表。 说明：如果预计三年后的数据量根本达不到这个级别，请不要在创建表时就分库分表。
+
+7. 表达是与否概念的字段，必须使用 is_xxx 的方式命名，数据类型是 unsigned tinyint （1 表示是，0 表示否）。
+
+   **说明：**
+
+   任何字段如果为非负数，必须是unsigned。
+
+   **注意：**
+
+   POJO 类中的任何布尔类型的变量，都不要加 is 前缀。数据库表示是与否的值，使用 tinyint 类型，坚持 is_xxx 的 命名方式是为了明确其取值含义与取值范围。
+
+   正例：表达逻辑删除的字段名 is_deleted，1 表示删除，0 表示未删除。
+
+8. 小数类型为decimal，禁止使用float 和double。 说明：float和double在存储的时候，存在精度损失的问题，很可能在值的比较时，得到不正确的结果。如果存储的数据范围超过decimal的范围，建议将数据拆成整数和小数分开存储。
+
+9. 如果存储的字符串长度几乎相等，使用char定长字符串类型。
+
+10. varchar 是可变长字符串，不预先分配存储空间，长度不要超过 5000，如果存储长度大于此值，定义字段类型为 text，独立出来一张表，用主键来对应，避免影响其它字段索引效率。
+
+11. 唯一索引名为 **uk_字段名**；普通索引名则为 idx_字段名。
+
+    说明：uk_ 即 unique key；idx_ 即 index 的简称
+
+12. 不得使用外键与级联，一切外键概念必须在应用层解决。外键与级联更新适用于单机低并发，不适合分布式、高并发集群；级联更新是强阻塞，存在数据库更新风暴的风险；外键影响数据库的插入速度。
+
+
+
+## 10. 谷粒学苑-工程结构介绍
+
+![image-20220726205300617](http://typora-imagelist.oss-cn-qingdao.aliyuncs.com/image-20220726205300617.png)
+
+### 10.1 工程结构
+
+![image-20220726205548926](http://typora-imagelist.oss-cn-qingdao.aliyuncs.com/image-20220726205548926.png)
+
+
+
+
+
+### 10.2 模块说明
+
+- **guli-parent**：在线教学根目录（父工程），管理四个子模块：
+
+  - **canal-client**：**canal**数据库表同步模块（统计同步数据）
+  - **common**：公共模块父节点
+    - common-util：工具类模块，所有模块都可以依赖于它
+    - service-base：service服务的base包，包含service服务的公共配置类，所有service模块依赖于它
+    - spring-security：认证与授权模块，需要认证授权的service服务依赖于它
+  - **infrastructure**：基础服务模块父节点
+    - api-gateway：api网关服务
+
+  - **service**：**api**接口服务父节点
+    - service-acl：用户权限管理api接口服务（用户管理、角色管理和权限管理等）
+    - service-cms：cms api接口服务
+    - service-edu：教学相关api接口服务
+    - service-msm：短信api接口服务
+    - service-order：订单相关api接口服务
+    - service-oss：阿里云oss api接口服务
+    - service-statistics：统计报表api接口服务
+    - service-ucenter：会员api接口服务
+    - service-vod：视频点播api接口服务
+
+
+
+## 11. 谷粒学苑-创建父工程
+
