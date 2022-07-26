@@ -614,7 +614,427 @@ public class MybatisPlusConfig {
 
 ## 5. MybatisPlus-select
 
+### 5.1 通过id查询
+
+```java
+@Test
+    void testOptimisticLock() {
+        //根据Id查询用户
+        User user = userMapper.selectById(1550420141828943876L);
+        //更新用户年龄
+        user.setAge(31);
+        //更新用户
+        int row = userMapper.updateById(user);
+    }
+```
 
 
 
+### 5.2 通过多个id批量查询
+
+```java
+@Test
+    void selectByIds() {
+        List<User> users = userMapper.selectBatchIds(Arrays.asList(1L, 2L, 3L));
+        System.out.println(users);
+    }
+```
+
+
+
+### 5.3 通过Map封装查询条件
+
+```java
+@Test
+    void selectByMap() {
+        //根据条件查询
+        HashMap<String, Object> map = new HashMap<>();
+        map.put("name", "world");
+        map.put("age", 31);
+        List<User> users = userMapper.selectByMap(map);
+        System.out.println(users);
+    }
+```
+
+> 注意：map中的key对应的是数据库中的列名。例如数据库user_id，实体类是userId，这时map的key需要填写user_id
+
+
+
+### 5.4 分页
+
+MyBatis Plus自带分页插件，只要简单的配置即可实现分页功能
+
+#### 5.4.1 分页配置类
+
+在配置MybatisPlusConfig类中，新增分页插件
+
+```java
+/**
+     * 分页插件
+     */
+    @Bean
+    public PaginationInterceptor paginationInterceptor() {
+        return new PaginationInterceptor();
+    }
+```
+
+
+
+#### 5.4.2 测试分页
+
+```java
+@Test
+    void selectPage() {
+        //创建分页对象,并传入页码和每页显示条数
+        Page<User> page = new Page<>(1, 3);
+        //分页查询
+        IPage<User> users = userMapper.selectPage(page, null);
+        System.out.println("当前页码===" + users.getCurrent());//当前页码
+        System.out.println("总页数===" + users.getPages());//总页数
+        System.out.println("每页显示条数===" + users.getSize());//每页显示条数
+        System.out.println("当前页的数据===" + users.getRecords());//当前页的数据
+        System.out.println("总记录数===" + users.getTotal());//总记录数
+        System.out.println("是否有下一页===" + page.hasNext());//是否有下一页
+        System.out.println("是否有上一页===" + page.hasPrevious());//是否有上一页
+        System.out.println(users);
+    }
+```
+
+
+
+## 6. MybatisPlus-delete
+
+### 6.1 根据id删除
+
+```java
+/**
+     * 物理删除 根据id删除
+     */
+    @Test
+    void deleteById() {
+        int row = userMapper.deleteById(1550420141828943876L);
+        System.out.println(row);
+    }
+```
+
+
+
+### 6.2 根据多个id批量删除
+
+```java
+/**
+     * 物理删除 根据id批量删除
+     */
+    @Test
+    void deleteByIds() {
+        int row = userMapper.deleteBatchIds(Arrays.asList(1550420141828943875L, 1550420141828943874L));
+        System.out.println(row);
+    }
+```
+
+
+
+### 6.3 根据简单条件删除
+
+```java
+/**
+     * 根据条件删除
+     */
+    @Test
+    void deleteByMap() {
+        HashMap<String, Object> map = new HashMap<>();
+        map.put("name", "Billie");
+        map.put("age", 24);
+        int row = userMapper.deleteByMap(map);
+        System.out.println(row);
+    }
+```
+
+
+
+### 6.4 逻辑删除
+
+- 物理删除：真实删除，将对应数据从数据库中删除，之后查询不到此条被删除数据
+- 逻辑删除：假删除，将对应数据中代表是否被删除字段状态修改为“被删除状态”，之后在数据库中仍旧能看到此条数据记录
+
+
+
+#### 6.4.1 在表中添加delete字段
+
+```mysql
+ALTER TABLE `user` ADD COLUMN `deleted` boolean
+```
+
+
+
+#### 6.4.2 实体类添加deleted字段
+
+并加上@TableLogic注解和@TableField(fill = FieldFill.INSERT)注解
+
+```java
+@TableLogic
+@TableField(fill = FieldFill.INSERT)
+private Integer deleted;
+```
+
+
+
+#### 6.4.3 元对象处理器接口添加deleted的insert默认值
+
+```java
+package com.ama.mpdemo1010.handler;
+
+import com.baomidou.mybatisplus.core.handlers.MetaObjectHandler;
+import org.apache.ibatis.reflection.MetaObject;
+import org.springframework.stereotype.Component;
+
+import java.util.Date;
+
+/**
+ * 实现公共字段自动写入
+ *
+ * @author WangWenZhe
+ * @date 2020/7/20
+ */
+@Component
+public class MyMetaObjectHandler implements MetaObjectHandler {
+
+    /**
+     * 在执行插入操作之前执行
+     *
+     * @param metaObject
+     */
+    @Override
+    public void insertFill(MetaObject metaObject) {
+        this.setFieldValByName("createTime", new Date(), metaObject);
+        this.setFieldValByName("updateTime", new Date(), metaObject);
+        this.setFieldValByName("version", 1, metaObject);
+        this.setFieldValByName("deleted", 0, metaObject);
+    }
+
+    /**
+     * 在执行更新操作之前执行
+     *
+     * @param metaObject
+     */
+    @Override
+    public void updateFill(MetaObject metaObject) {
+        this.setFieldValByName("updateTime", new Date(), metaObject);
+    }
+}
+```
+
+
+
+#### 6.4.4 **application.properties** 加入配置
+
+此为默认值，如果你的默认值和mp默认的一样,该配置可无
+
+```properties
+#删除时默认字段的值
+mybatis-plus.global-config.db-config.logic-delete-value=1
+mybatis-plus.global-config.db-config.logic-not-delete-value=0
+```
+
+
+
+#### 6.4.5 在MybatisPlusConfig中注册Bean
+
+```java
+/**
+  * 逻辑删除插件
+  */
+@Bean
+public ISqlInjector sqlInjector() {
+    return new LogicSqlInjector();
+}
+```
+
+
+
+#### 6.4.6 总结
+
+**总结：**
+
+1. 在表中新增tinyint类型的deleted字段。
+2. 在实体类增加deleted字段，并添加@TableLogic注解和@TableField(fill = FieldFill.INSERT)注解。
+3. 在元对象处理器接口添加deleted的insert默认值。
+4. 在properties文件中加入deleted字段的默认值。
+5. 在MybatisPlusConfig文件中，注册Bean，一个逻辑删除的插件。
+
+**注意：**
+
+当使用MybatisPlus自带的查询时，会默认将deleted=0的条件加上。如果想实现deleted=1需要自己写查询语句。
+
+
+
+## 7. 性能分析
+
+性能分析拦截器，用于输出每条 SQL 语句及其执行时间
+
+SQL 性能执行分析,开发环境使用，超过指定时间，停止运行。有助于发现问题
+
+
+
+### 7.1 配置插件
+
+在MybatisPlusConfig文件中，增加SQL执行性能分析插件
+
+**参数说明：**
+
+- maxTime： SQL 执行最大时长，超过自动停止运行，有助于发现问题。
+- format： SQL是否格式化，默认false。
+
+```java
+/**
+     * SQL执行性能分析插件
+     * 开发环境使用，线上不推荐使用。
+     * maxTime：指的是sql最大执行时长
+     * 三种环境：
+     * dev:开发环境;
+     * test:测试环境;
+     * prod:生产环境;
+     */
+    @Bean
+    @Profile({"dev", "test"})//dev和test环境开启
+    public PerformanceInterceptor performanceInterceptor() {
+        PerformanceInterceptor performanceInterceptor = new PerformanceInterceptor();
+        performanceInterceptor.setMaxTime(200);//ms,超过此处设置的ms则sql不执行
+        performanceInterceptor.setFormat(true);//输出sql格式化
+        return performanceInterceptor;
+    }
+```
+
+
+
+### 7.2 配置dev环境
+
+在配置文件设置环境
+
+```properties
+#环境设置
+spring.profiles.active=dev
+```
+
+
+
+### 7.3 测试输出
+
+#### 7.3.1 正常测试
+
+新增一条数据
+
+```java
+@Test
+    void insertUser() {
+        User user = new User();
+        user.setName("world");
+        user.setAge(28);
+        user.setEmail("world@qq.com");
+        int result = userMapper.insert(user);
+        System.out.println(result);//影响的行数
+        System.out.println("insert:" + user);//id自动回填
+    }
+```
+
+控制台输出
+
+![image-20220726185340633](http://typora-imagelist.oss-cn-qingdao.aliyuncs.com/image-20220726185340633.png)
+
+
+
+#### 7.3.2 超时测试
+
+将MaxTime参数设置为10后，SQL执行超时出现错误。
+
+![image-20220726185816391](http://typora-imagelist.oss-cn-qingdao.aliyuncs.com/image-20220726185816391.png)
+
+
+
+## 8. wapper
+
+### 8.1 wapper的介绍
+
+![image-20220726191445136](http://typora-imagelist.oss-cn-qingdao.aliyuncs.com/image-20220726191445136.png)
+
+**说明：**
+
+Wrapper ： 条件构造抽象类，最顶端父类
+
+AbstractWrapper ： 用于查询条件封装，生成 sql 的 where 条件
+
+QueryWrapper ： Entity 对象封装操作类，不是用lambda语法
+
+ UpdateWrapper ： Update 条件封装，用于Entity对象更新操作
+
+AbstractLambdaWrapper ： Lambda 语法使用 Wrapper统一处理解析 lambda 获取 column。
+
+LambdaQueryWrapper ：看名称也能明白就是用于Lambda语法使用的查询Wrapper
+
+LambdaUpdateWrapper ： Lambda 更新封装Wrapper
+
+
+
+### 8.2 AbstractWrapper
+
+#### 8.2.1 QueryWrapper常用的参数
+
+![wrapper](http://typora-imagelist.oss-cn-qingdao.aliyuncs.com/wrapper.png)
+
+**注意：**以下条件构造器的方法入参中的column均表示数据库字段
+
+
+
+#### 8.2.2 指定要查询的列
+
+```java
+/**
+     * 使用wrapper指定要查询的列
+     * 结果：查询的数据中除了除了id和name之外，其他的数据都是null
+     */
+    @Test
+    void selectByColumn() {
+        //创建查询对象
+        QueryWrapper<User> queryWrapper = new QueryWrapper<>();
+        //添加条件
+        queryWrapper.select("name", "age");
+        //查询
+        List<User> users = userMapper.selectList(queryWrapper);
+        users.forEach(System.out::println);
+    }
+```
+
+
+
+#### 8.2.3 set、setSql
+
+最终的sql会合并 user.setAge()，以及 userUpdateWrapper.set() 和 setSql() 中的字段
+
+```java
+/**
+     * 使用wrapper中的set、setSql
+     */
+    @Test
+    void selectBySet() {
+        //修改值
+        User user = new User();
+        user.setAge(99);
+        //修改条件
+        UpdateWrapper<User> userUpdateWrapper = new UpdateWrapper<>();
+        userUpdateWrapper
+                .like("name", "t")
+                .set("name", "老李头")//除了可以查询还可以使用set设置修改的字段
+                .setSql("email = '123@qq.com'");//可以有子查询
+        int result = userMapper.update(user, userUpdateWrapper);
+        System.out.println(result);
+    }
+```
+
+执行的Sql为
+
+![image-20220726195522139](http://typora-imagelist.oss-cn-qingdao.aliyuncs.com/image-20220726195522139.png)
+
+
+
+## 9. 谷粒学苑-数据库设计
 
