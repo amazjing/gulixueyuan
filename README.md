@@ -1130,3 +1130,630 @@ LambdaUpdateWrapper ： Lambda 更新封装Wrapper
 
 ## 11. 谷粒学苑-创建父工程
 
+(1). **使用IDEA创建guli_parent工程**
+
+![image-20220726213005233](http://typora-imagelist.oss-cn-qingdao.aliyuncs.com/image-20220726213005233.png)
+
+(2). **修改pom.xml文件，改为2.2.1.RELEASE**
+
+```
+<parent>
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-starter-parent</artifactId>
+        <version>2.2.1.RELEASE</version>
+        <relativePath/> 
+    </parent>
+```
+
+(3). **在<artifactId> 节点后面添加pom类型**
+
+```xml
+<artifactId> 节点后面添加 pom类型
+```
+
+(4). **在pom.xml中添加依赖的版本**
+
+删除pom.xml中的<dependencies>内容。
+
+```xml
+<!--以下内容删除-->
+    <dependencies>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-test</artifactId>
+            <scope>test</scope>
+        </dependency>
+    </dependencies>
+```
+
+**添加** <properties>确定依赖的版本
+
+```xml
+    <properties>
+        <java.version>1.8</java.version>
+        <guli.version>0.0.1-SNAPSHOT</guli.version>
+        <mybatis-plus.version>3.0.5</mybatis-plus.version>
+        <velocity.version>2.0</velocity.version>
+        <swagger.version>2.7.0</swagger.version>
+        <aliyun.oss.version>2.8.3</aliyun.oss.version>
+        <jodatime.version>2.10.1</jodatime.version>
+        <poi.version>3.17</poi.version>
+        <commons-fileupload.version>1.3.1</commons-fileupload.version>
+        <commons-io.version>2.6</commons-io.version>
+        <httpclient.version>4.5.1</httpclient.version>
+        <jwt.version>0.7.0</jwt.version>
+        <aliyun-java-sdk-core.version>4.3.3</aliyun-java-sdk-core.version>
+        <aliyun-sdk-oss.version>3.1.0</aliyun-sdk-oss.version>
+        <aliyun-java-sdk-vod.version>2.15.2</aliyun-java-sdk-vod.version>
+        <aliyun-java-vod-upload.version>1.4.11</aliyun-java-vod-upload.version>
+        <aliyun-sdk-vod-upload.version>1.4.11</aliyun-sdk-vod-upload.version>
+        <fastjson.version>1.2.28</fastjson.version>
+        <gson.version>2.8.2</gson.version>
+        <json.version>20170516</json.version>
+        <commons-dbutils.version>1.7</commons-dbutils.version>
+        <canal.client.version>1.1.0</canal.client.version>
+        <docker.image.prefix>zx</docker.image.prefix>
+        <cloud-alibaba.version>0.2.2.RELEASE</cloud-alibaba.version>
+    </properties>
+```
+
+(5). **配置<dependencyManagement>锁定依赖的版本**
+
+```java
+<dependencyManagement>
+        <dependencies>
+            <!--Spring Cloud-->
+            <dependency>
+                <groupId>org.springframework.cloud</groupId>
+                <artifactId>spring-cloud-dependencies</artifactId>
+                <version>Hoxton.RELEASE</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+
+            <dependency>
+                <groupId>org.springframework.cloud</groupId>
+                <artifactId>spring-cloud-alibaba-dependencies</artifactId>
+                <version>${cloud-alibaba.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+            <!--mybatis-plus 持久层-->
+            <dependency>
+                <groupId>com.baomidou</groupId>
+                <artifactId>mybatis-plus-boot-starter</artifactId>
+                <version>${mybatis-plus.version}</version>
+            </dependency>
+
+            <!-- velocity 模板引擎, Mybatis Plus 代码生成器需要 -->
+            <dependency>
+                <groupId>org.apache.velocity</groupId>
+                <artifactId>velocity-engine-core</artifactId>
+                <version>${velocity.version}</version>
+            </dependency>
+
+            <!--swagger-->
+            <dependency>
+                <groupId>io.springfox</groupId>
+                <artifactId>springfox-swagger2</artifactId>
+                <version>${swagger.version}</version>
+            </dependency>
+            <!--swagger ui-->
+            <dependency>
+                <groupId>io.springfox</groupId>
+                <artifactId>springfox-swagger-ui</artifactId>
+                <version>${swagger.version}</version>
+            </dependency>
+
+            <!--aliyunOSS-->
+            <dependency>
+                <groupId>com.aliyun.oss</groupId>
+                <artifactId>aliyun-sdk-oss</artifactId>
+                <version>${aliyun.oss.version}</version>
+            </dependency>
+
+            <!--日期时间工具-->
+            <dependency>
+                <groupId>joda-time</groupId>
+                <artifactId>joda-time</artifactId>
+                <version>${jodatime.version}</version>
+            </dependency>
+
+            <!--xls-->
+            <dependency>
+                <groupId>org.apache.poi</groupId>
+                <artifactId>poi</artifactId>
+                <version>${poi.version}</version>
+            </dependency>
+            <!--xlsx-->
+            <dependency>
+                <groupId>org.apache.poi</groupId>
+                <artifactId>poi-ooxml</artifactId>
+                <version>${poi.version}</version>
+            </dependency>
+
+            <!--文件上传-->
+            <dependency>
+                <groupId>commons-fileupload</groupId>
+                <artifactId>commons-fileupload</artifactId>
+                <version>${commons-fileupload.version}</version>
+            </dependency>
+
+            <!--commons-io-->
+            <dependency>
+                <groupId>commons-io</groupId>
+                <artifactId>commons-io</artifactId>
+                <version>${commons-io.version}</version>
+            </dependency>
+
+            <!--httpclient-->
+            <dependency>
+                <groupId>org.apache.httpcomponents</groupId>
+                <artifactId>httpclient</artifactId>
+                <version>${httpclient.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>com.google.code.gson</groupId>
+                <artifactId>gson</artifactId>
+                <version>${gson.version}</version>
+            </dependency>
+
+            <!-- JWT -->
+            <dependency>
+                <groupId>io.jsonwebtoken</groupId>
+                <artifactId>jjwt</artifactId>
+                <version>${jwt.version}</version>
+            </dependency>
+
+            <!--aliyun-->
+            <dependency>
+                <groupId>com.aliyun</groupId>
+                <artifactId>aliyun-java-sdk-core</artifactId>
+                <version>${aliyun-java-sdk-core.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.aliyun.oss</groupId>
+                <artifactId>aliyun-sdk-oss</artifactId>
+                <version>${aliyun-sdk-oss.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.aliyun</groupId>
+                <artifactId>aliyun-java-sdk-vod</artifactId>
+                <version>${aliyun-java-sdk-vod.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.aliyun</groupId>
+                <artifactId>aliyun-java-vod-upload</artifactId>
+                <version>${aliyun-java-vod-upload.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.aliyun</groupId>
+                <artifactId>aliyun-sdk-vod-upload</artifactId>
+                <version>${aliyun-sdk-vod-upload.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.alibaba</groupId>
+                <artifactId>fastjson</artifactId>
+                <version>${fastjson.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.json</groupId>
+                <artifactId>json</artifactId>
+                <version>${json.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>commons-dbutils</groupId>
+                <artifactId>commons-dbutils</artifactId>
+                <version>${commons-dbutils.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>com.alibaba.otter</groupId>
+                <artifactId>canal.client</artifactId>
+                <version>${canal.client.version}</version>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
+```
+
+删除guli_parent项目中的src文件夹。
+
+**注意：**
+
+1. **IDEA导入maven可能失败：**
+
+   删除<dependencyManagement>标签，重新刷新即可下载。
+
+2. **下载aliyun-java-sdk-vod与aliyun-java-vod-upload失败：**
+
+   在官网https://help.aliyun.com/document_detail/106648.html下载所需要的版本
+
+   ![image-20220726230020143](http://typora-imagelist.oss-cn-qingdao.aliyuncs.com/image-20220726230020143.png)
+
+   下载后名称为VODUploadDemo-java-1.4.11.zip，进行解压，将lib文件里面的aliyun-java-vod-upload-1.4.11.jar文件，复制到自己的maven文件夹下的bin文件见内。然后在bin文件夹内输入cmd，输入命令`mvn install:install-file -DgroupId=com.aliyun -DartifactId=aliyun-sdk-vod-upload -Dversion=1.4.11 -Dpackaging=jar -Dfile=aliyun-java-vod-upload-1.4.11.jar`，下载aliyun-sdk-vod-upload的maven包，然后再输入`mvn install:install-file  -DgroupId=com.aliyun  -DartifactId=aliyun-java-vod-upload -Dversion=1.4.11 -Dpackaging=jar -DlocalRepositoryPath=D:\Java\Maven\apache-maven-3.8.3\maven-repo(自己的maven仓库) -Dfile=aliyun-java-vod-upload-1.4.11.jar`，下载aliyun-java-vod-upload的maven包。
+
+## 12.谷粒学苑-创建子模块
+
+![image-20220726231216349](http://typora-imagelist.oss-cn-qingdao.aliyuncs.com/image-20220726231216349.png)
+
+(7). **修改service的pom文件**
+
+添加<packaging>
+
+```java
+<packaging>pom</packaging>
+```
+
+增加<dependencies>内容，注释掉的暂时用不到，不注释启动会报错。
+
+```xml
+<dependencies>
+        <!--<dependency>
+            <groupId>org.springframework.cloud</groupId>
+            <artifactId>spring-cloud-starter-netflix-ribbon</artifactId>
+        </dependency>-->
+        <!--hystrix依赖，主要是用 @HystrixCommand -->
+        <!--<dependency>
+            <groupId>org.springframework.cloud</groupId>
+            <artifactId>spring-cloud-starter-netflix-hystrix</artifactId>
+        </dependency>-->
+
+        <!--服务注册-->
+        <!--<dependency>
+            <groupId>org.springframework.cloud</groupId>
+            <artifactId>spring-cloud-starter-alibaba-nacos-discovery</artifactId>
+        </dependency>-->
+        <!--服务调用-->
+        <!--<dependency>
+            <groupId>org.springframework.cloud</groupId>
+            <artifactId>spring-cloud-starter-openfeign</artifactId>
+        </dependency>-->
+
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-web</artifactId>
+        </dependency>
+
+        <!--mybatis-plus-->
+        <dependency>
+            <groupId>com.baomidou</groupId>
+            <artifactId>mybatis-plus-boot-starter</artifactId>
+        </dependency>
+
+        <!--mysql-->
+        <dependency>
+            <groupId>mysql</groupId>
+            <artifactId>mysql-connector-java</artifactId>
+        </dependency>
+
+        <!-- velocity 模板引擎, Mybatis Plus 代码生成器需要 -->
+        <dependency>
+            <groupId>org.apache.velocity</groupId>
+            <artifactId>velocity-engine-core</artifactId>
+        </dependency>
+
+        <!--swagger-->
+        <dependency>
+            <groupId>io.springfox</groupId>
+            <artifactId>springfox-swagger2</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>io.springfox</groupId>
+            <artifactId>springfox-swagger-ui</artifactId>
+        </dependency>
+
+        <!--lombok用来简化实体类：需要安装lombok插件-->
+        <dependency>
+            <groupId>org.projectlombok</groupId>
+            <artifactId>lombok</artifactId>
+        </dependency>
+
+        <!--xls-->
+        <dependency>
+            <groupId>org.apache.poi</groupId>
+            <artifactId>poi</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>org.apache.poi</groupId>
+            <artifactId>poi-ooxml</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>commons-fileupload</groupId>
+            <artifactId>commons-fileupload</artifactId>
+        </dependency>
+
+        <!--httpclient-->
+        <dependency>
+            <groupId>org.apache.httpcomponents</groupId>
+            <artifactId>httpclient</artifactId>
+        </dependency>
+        <!--commons-io-->
+        <dependency>
+            <groupId>commons-io</groupId>
+            <artifactId>commons-io</artifactId>
+        </dependency>
+        <!--gson-->
+        <dependency>
+            <groupId>com.google.code.gson</groupId>
+            <artifactId>gson</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <version>4.12</version>
+        </dependency>
+    </dependencies>
+```
+
+删除service项目中的src文件夹。
+
+
+
+## 13. 谷粒学苑-创建service的子模块
+
+### 13.1 创建子模块
+
+在父工程**service**模块下面创建子模块**service_edu**，还是通过maven创建，与创建service项目时相同。
+
+
+
+### 13.2 讲师管理模块
+
+#### 13.2.1 创建配置文件
+
+在service下面service_edu模块中resources目录下创建文件application.properties创建配置文件
+
+```properties
+#服务端口
+server.port=8001
+#服务名
+spring.application.name=service_edu
+# 环境设置：dev、test、prod
+spring.profiles.active=dev
+#mysql数据库连接
+spring.datasource.driver-class-name=com.mysql.cj.jdbc.Driver
+spring.datasource.url=jdbc:mysql://localhost:3306/guli?serverTimezone=GMT%2B8
+spring.datasource.username=root
+spring.datasource.password=123456
+
+#mybatis日志
+mybatis-plus.configuration.log-impl=org.apache.ibatis.logging.stdout.StdOutImpl
+```
+
+
+
+#### 13.2.2 创建MybatisPlus代码生成器
+
+在test/java目录下创建包com.ama.eduservice，创建代码生成器：CodeGenerator.java
+
+```java
+package eduservice;
+
+import com.baomidou.mybatisplus.annotation.DbType;
+import com.baomidou.mybatisplus.annotation.IdType;
+import com.baomidou.mybatisplus.generator.AutoGenerator;
+import com.baomidou.mybatisplus.generator.config.DataSourceConfig;
+import com.baomidou.mybatisplus.generator.config.GlobalConfig;
+import com.baomidou.mybatisplus.generator.config.PackageConfig;
+import com.baomidou.mybatisplus.generator.config.StrategyConfig;
+import com.baomidou.mybatisplus.generator.config.rules.DateType;
+import com.baomidou.mybatisplus.generator.config.rules.NamingStrategy;
+import org.junit.Test;
+
+/**
+ * 2022/7/26 23:46
+ *
+ * @Description 代码生成器
+ * @Author WangWenZhe
+ */
+public class CodeGenerator {
+    @Test
+    public void run() {
+        // 1、创建代码生成器
+        AutoGenerator mpg = new AutoGenerator();
+        // 2、全局配置
+        GlobalConfig gc = new GlobalConfig();
+        String projectPath = System.getProperty("user.dir");
+        System.out.println(projectPath);
+        //设置输出路径
+        gc.setOutputDir("D:\\Java\\JavaProject\\github\\gulixueyuan\\guli_parent\\service\\service_edu" + "/src/main/java");
+        gc.setAuthor("WangWenZhe");
+        gc.setOpen(false); //生成后是否打开资源管理器
+        gc.setFileOverride(false); //重新生成时文件是否覆盖
+        gc.setServiceName("%sService"); //去掉Service接口的首字母I
+        gc.setIdType(IdType.ID_WORKER); //主键策略
+        gc.setDateType(DateType.ONLY_DATE);//定义生成的实体类中日期类型
+        gc.setSwagger2(true);//开启Swagger2模式
+
+        mpg.setGlobalConfig(gc);
+
+        // 3、数据源配置
+        DataSourceConfig dsc = new DataSourceConfig();
+        dsc.setUrl("jdbc:mysql://localhost:3306/guli_edu?serverTimezone=GMT%2B8");
+        dsc.setDriverName("com.mysql.cj.jdbc.Driver");
+        dsc.setUsername("root");
+        dsc.setPassword("123456");
+        dsc.setDbType(DbType.MYSQL);
+        mpg.setDataSource(dsc);
+
+        // 4、包配置
+        PackageConfig pc = new PackageConfig();
+        pc.setModuleName("eduservice"); //模块名
+        pc.setParent("com.ama");
+        pc.setController("controller");
+        pc.setEntity("entity");
+        pc.setService("service");
+        pc.setMapper("mapper");
+        mpg.setPackageInfo(pc);
+
+        // 5、策略配置
+        StrategyConfig strategy = new StrategyConfig();
+        strategy.setInclude("edu_teacher");
+        strategy.setNaming(NamingStrategy.underline_to_camel);//数据库表映射到实体的命名策略
+        strategy.setTablePrefix(pc.getModuleName() + "_"); //生成实体时去掉表前缀
+
+        strategy.setColumnNaming(NamingStrategy.underline_to_camel);//数据库表字段映射到实体的命名策略
+        strategy.setEntityLombokModel(true); // lombok 模型 @Accessors(chain =true)setter链式操作
+
+        strategy.setRestControllerStyle(true); //restful api风格控制器
+        strategy.setControllerMappingHyphenStyle(true); //url中驼峰转连字符
+
+        mpg.setStrategy(strategy);
+
+        // 6、执行
+        mpg.execute();
+    }
+}
+```
+
+
+
+#### 13.2.3 编写讲师Controller层代码
+
+```java
+//region 服务
+    /**
+     * 讲师服务
+     */
+    @Autowired
+    private EduTeacherService eduTeacherService;
+    //endregion
+
+    //region 查询讲师表所有数据
+
+    /**
+     * 查询讲师表所有数据
+     */
+    @RequestMapping("/findAll")
+    public List<EduTeacher> findAllTeacherList() {
+        //调用service层的方法，实现查询所有的操作
+        List<EduTeacher> list = eduTeacherService.list(null);
+        return list;
+    }
+    //endregion
+```
+
+
+
+#### 13.2.4 创建启动类
+
+```java
+package com.ama.eduservice;
+
+import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
+
+/**
+ * 2022/7/27 0:13
+ *
+ * @Description
+ * @Author WangWenZhe
+ */
+@SpringBootApplication
+public class EduApplication {
+    public static void main(String[] args) {
+        SpringApplication.run(EduApplication.class, args);
+    }
+}
+```
+
+
+
+#### 13.2.5 配置类
+
+```java
+package com.ama.eduservice.config;
+
+import org.mybatis.spring.annotation.MapperScan;
+import org.springframework.context.annotation.Configuration;
+
+/**
+ * 2022/7/27 0:16
+ *
+ * @Description
+ * @Author WangWenZhe
+ */
+@Configuration
+@MapperScan("com.ama.eduservice.mapper")
+public class EduConfig {
+}
+```
+
+
+
+#### 13.2.7 配置统一返回的json时间格式
+
+默认情况下json时间格式带有时区，并且是世界标准时间，和我们的时间差了八个小时
+
+在application.properties中设置
+
+```properties
+#返回json的全局时间格式
+spring.jackson.date-format=yyyy-MM-dd HH:mm:ss
+spring.jackson.time-zone=GMT+8
+```
+
+
+
+#### 13.2.8 讲师逻辑删除功能
+
+在EduConfig类中配置逻辑删除插件
+
+```java
+    /**
+     * 逻辑删除插件
+     */
+    @Bean
+    public ISqlInjector sqlInjector() {
+        return new LogicSqlInjector();
+    }
+```
+
+修改实体类，添加注解@TableLogic
+
+```java
+@ApiModelProperty(value = "逻辑删除 1(true) 已删除，0(false) 未删除")
+@TableLogic
+private Integer isDeleted;
+```
+
+在Contoller层编写删除方法
+
+```java
+@DeleteMapping("{id}")
+    public boolean deleteTeacherById(@PathVariable String id) {
+        //调用service层的方法，实现逻辑删除操作
+        boolean flag = eduTeacherService.removeById(id);
+        return flag;
+    }
+```
+
+
+
+## 14. Swagger2
+
+前后端分离开发模式中，api文档是最好的沟通方式。
+
+Swagger 是一个规范和完整的框架，用于生成、描述、调用和可视化 RESTful 风格的 Web 服务。
+
+1. 及时性 (接口变更后，能够及时准确地通知相关前后端开发人员) 
+2. 规范性 (并且保证接口的规范性，如接口的地址，请求方式，参数及响应格式和错误信息) 
+
+3. 一致性 (接口信息一致，不会出现因开发人员拿到的文档版本不一致，而出现分歧) 
+
+4. 可测性 (直接在接口文档上进行测试，以方便理解业务)
+
+
+
+
+
