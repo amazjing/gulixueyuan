@@ -1634,7 +1634,7 @@ public class CodeGenerator {
     /**
      * 查询讲师表所有数据
      */
-    @RequestMapping("/findAll")
+    @GetMapping("findAll")
     public List<EduTeacher> findAllTeacherList() {
         //调用service层的方法，实现查询所有的操作
         List<EduTeacher> list = eduTeacherService.list(null);
@@ -1892,7 +1892,7 @@ public class SwaggerConfig {
 
 启动service_edu项目，访问地址http://localhost:8001/swagger-ui.html
 
-![image-20220727154945827](http://typora-imagelist.oss-cn-qingdao.aliyuncs.com/image-20220727154945827.png)
+![image-20220727201847088](http://typora-imagelist.oss-cn-qingdao.aliyuncs.com/image-20220727201847088.png)
 
 
 
@@ -1953,3 +1953,381 @@ public class EduTeacherController {
 
 
 
+## 15. 统一返回数据格式
+
+项目中我们会将响应封装成json返回，一般我们会将所有接口的数据格式统一， 使前端(iOS Android,Web)对数据的操作更一致、轻松。
+
+一般情况下，统一返回数据格式没有固定的格式，只要能描述清楚返回的数据状态以及要返回的具体数据就可以。但是一般会包含状态码、返回消息、数据这几部分内容
+
+例如，我们的系统要求返回的基本数据格式如下：
+
+```json
+{
+    "success":true,
+    "code":20000,
+    "message":"成功",
+    "data":{
+        "items":[
+            {
+                "id":"1",
+                "name":"刘德华",
+                "intro":"毕业于师范大学数学系，热爱教育事业，执教数学思维6年有余"
+            }
+        ]
+    }
+}
+```
+
+**分页：**
+
+```json
+{
+    "success":true,
+    "code":20000,
+    "message":"成功",
+    "data":{
+        "total":17,
+        "rows":[
+            {
+                "id":"1",
+                "name":"刘德华",
+                "intro":"毕业于师范大学数学系，热爱教育事业，执教数学思维6年有余"
+            }
+        ]
+    }
+}
+```
+
+**没有返回数据：**
+
+```json
+{
+    "success":true,
+    "code":20000,
+    "message":"成功",
+    "data":{
+
+    }
+}
+```
+
+**失败：**
+
+```json
+{
+    "success":false,
+    "code":20001,
+    "message":"失败",
+    "data":{
+
+    }
+}
+```
+
+**因此，我们定义统一结果：**
+
+```json
+{
+    "success":"布尔",//响应是否成功
+    "code":"数字",//响应码
+    "message":"字符串",//返回消息
+    "data":"HashMap"//返回数据，放在键值对中
+}
+```
+
+
+
+### 15.1 创建common_utils模块
+
+#### 15.1.1 创建子模块
+
+在common模块下创建子模块common_utils
+
+![image-20220727195220346](http://typora-imagelist.oss-cn-qingdao.aliyuncs.com/image-20220727195220346.png)
+
+
+
+#### 15.1.2 创建接口定义返回码
+
+```java
+package com.ama.commonutis.config;
+
+public interface ResultCode {
+    public static final Integer SUCCESS = 20000;
+    public static final Integer ERROR = 20001;
+}
+```
+
+
+
+#### 15.1.3 定义返回数据格式
+
+```java
+package com.ama.commonutis.config;
+
+import io.swagger.annotations.ApiModelProperty;
+import lombok.Data;
+
+import java.util.HashMap;
+import java.util.Map;
+
+/**
+ * 2022/7/27 20:00
+ *
+ * @Description 返回数据格式
+ * @Author WangWenZhe
+ */
+@Data
+public class R {
+    @ApiModelProperty(value = "是否成功")
+    private Boolean success;
+    @ApiModelProperty(value = "返回码")
+    private Integer code;
+    @ApiModelProperty(value = "返回消息")
+    private String message;
+
+    @ApiModelProperty(value = "返回数据")
+    private Map<String, Object> data = new HashMap<String, Object>();
+
+    private R() {
+    }
+
+    public static R ok() {
+        R r = new R();
+        r.setSuccess(true);
+        r.setCode(ResultCode.SUCCESS);
+        r.setMessage("成功");
+        return r;
+    }
+
+    public static R error() {
+        R r = new R();
+        r.setSuccess(false);
+        r.setCode(ResultCode.ERROR);
+        r.setMessage("失败");
+        return r;
+    }
+
+    public R success(Boolean success) {
+        this.setSuccess(success);
+        return this;
+    }
+
+    public R message(String message) {
+        this.setMessage(message);
+        return this;
+    }
+
+    public R code(Integer code) {
+        this.setCode(code);
+        return this;
+    }
+
+    public R data(String key, Object value) {
+        this.data.put(key, value);
+        return this;
+    }
+
+    public R data(Map<String, Object> map) {
+        this.setData(map);
+        return this;
+    }
+}
+```
+
+
+
+### 15.2 统一返回结果使用
+
+#### 15.2.1 引入依赖
+
+在service模块中添加依赖
+
+```xml
+        <dependency>
+            <groupId>com.ama</groupId>
+            <artifactId>common_utils</artifactId>
+            <version>0.0.1-SNAPSHOT</version>
+        </dependency>
+```
+
+
+
+#### 15.2.2 修改Controller中的返回结果
+
+```java
+//region 查询讲师表所有数据
+
+    /**
+     * 查询讲师表所有数据
+     */
+    @ApiOperation(value = "查询讲师表所有数据")
+    @GetMapping("findAll")
+    public R findAllTeacherList() {
+        //调用service层的方法，实现查询所有的操作
+        List<EduTeacher> list = eduTeacherService.list(null);
+        return R.ok().data("items", list);
+    }
+    //endregion
+
+    //region 逻辑删除
+
+    /**
+     * 逻辑删除
+     */
+    @ApiOperation(value = "逻辑删除讲师")
+    @DeleteMapping("{id}")
+    public R deleteTeacherById(@ApiParam(name = "id", value = "讲师ID", required = true) @PathVariable String id) {
+        //调用service层的方法，实现逻辑删除操作
+        boolean flag = eduTeacherService.removeById(id);
+        if (flag) {
+            return R.ok();
+        } else {
+            return R.error();
+        }
+    }
+
+    //endregion
+```
+
+
+
+## 16. 讲师分页功能
+
+### 16.1 配置分页插件
+
+在service_edu模块中的EduConfig配置分页插件
+
+```java
+    /**
+     * 分页插件
+     */
+    @Bean
+    public PaginationInterceptor paginationInterceptor() {
+        return new PaginationInterceptor();
+    }
+```
+
+
+
+### 16.2 编写分页接口
+
+```java
+/**
+     * 分页查询所有讲师
+     *
+     * @param current 当前页
+     * @param limit   每页显示的条数
+     */
+    @ApiOperation(value = "分页查询所有讲师")
+    @GetMapping("pageTeacherList/{current}/{limit}")
+    public R pageTeacherList(@PathVariable long current, @PathVariable long limit) {
+        //创建page对象
+        Page<EduTeacher> pageTeacherList = new Page<>(current, limit);
+        //调用service层的方法，实现分页查询所有的操作
+        //调用方法的时候，底层封装，把分页所有数据封装到pageTeacherList对象里面
+        eduTeacherService.page(pageTeacherList, null);
+        long total = pageTeacherList.getTotal();
+        List<EduTeacher> records = pageTeacherList.getRecords();
+        //第一种方式：返回的是一个map集合
+//        Map map = new HashMap<>();
+//        map.put("total",total);
+//        map.put("rows",records);
+//        return R.ok().data(map);
+        //第二种方式：返回的是一个pojo对象
+        return R.ok().data("total", total).data("rows", records);
+    }
+```
+
+
+
+### 16.3 多条件组合分页查询
+
+#### 16.3.1 创建讲师查询的实体类
+
+```java
+package com.ama.eduservice.entity.vo;
+
+import io.swagger.annotations.ApiModelProperty;
+import lombok.Data;
+
+/**
+ * 2022/7/27 21:07
+ *
+ * @Description 讲师多条件查询
+ * @Author WangWenZhe
+ */
+@Data
+public class TeacherQuery {
+    private static final long serialVersionUID = 1L;
+
+    @ApiModelProperty(value = "教师名称,模糊查询")
+    private String name;
+
+    @ApiModelProperty(value = "头衔 1高级讲师 2首席讲师")
+    private Integer level;
+
+    @ApiModelProperty(value = "查询开始时间", example = "2019-01-01 10:10:10")
+    private String begin;//注意，这里使用的是String类型，前端传过来的数据无需进行类型转换
+
+    @ApiModelProperty(value = "查询结束时间", example = "2019-12-01 10:10:10")
+    private String end;
+}
+```
+
+
+
+#### 16.3.2 编写多条件组合分页查询接口
+
+```java
+    //region 多条件组合分页查询
+
+	/**
+     * 多条件组合分页查询
+     *
+     * @param current 当前页
+     * @param limit   每页显示的条数
+     */
+    @ApiOperation(value = "多条件组合分页查询")
+    @PostMapping("pageTeacherListByCondition/{current}/{limit}")
+    public R pageTeacherListByCondition(@PathVariable long current, @PathVariable long limit,
+                                        @RequestBody(required = false) TeacherQuery teacherQuery) {
+        //创建page对象
+        Page<EduTeacher> pageTeacherList = new Page<>(current, limit);
+        //构造条件
+        QueryWrapper<EduTeacher> wrapper = new QueryWrapper<>();
+        //多条件组合查询
+        String name = teacherQuery.getName();
+        Integer level = teacherQuery.getLevel();
+        String begin = teacherQuery.getBegin();
+        String end = teacherQuery.getEnd();
+        //判断条件值是否为空，如果不为空，拼接条件
+        if (!StringUtils.isEmpty(name)) {
+            //拼接条件
+            wrapper.like("name", name);
+        }
+        if (!StringUtils.isEmpty(level)) {
+            //拼接条件
+            wrapper.like("level", level);
+        }
+        if (!StringUtils.isEmpty(begin)) {
+            //拼接条件
+            wrapper.ge("gmt_create", begin);
+        }
+        if (!StringUtils.isEmpty(begin)) {
+            //拼接条件
+            wrapper.le("gmt_modified", end);
+        }
+
+        //调用service层的方法，实现多条件组合分页查询所有的操作
+        eduTeacherService.page(pageTeacherList, wrapper);
+        long total = pageTeacherList.getTotal();//总记录数
+        List<EduTeacher> records = pageTeacherList.getRecords();//数据list集合
+        return R.ok().data("total", total).data("rows", records);
+    }
+    //endregion
+```
+
+
+
+## 17. 
