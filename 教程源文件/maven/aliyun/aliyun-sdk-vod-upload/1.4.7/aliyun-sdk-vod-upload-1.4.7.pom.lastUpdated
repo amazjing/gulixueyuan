@@ -1,0 +1,6 @@
+#NOTE: This is an Aether internal implementation file, its format can be changed without prior notice.
+#Sat May 25 11:37:18 CST 2019
+@default-sonatype-nexus-staging-https\://oss.sonatype.org/service/local/staging/deploy/maven2/.lastUpdated=1558755436497
+https\://oss.sonatype.org/service/local/staging/deploy/maven2/.error=Could not transfer artifact com.aliyun\:aliyun-sdk-vod-upload\:pom\:1.4.7 from/to sonatype-nexus-staging (https\://oss.sonatype.org/service/local/staging/deploy/maven2/)\: Not authorized , ReasonPhrase\:Unauthorized.
+https\://repo.maven.apache.org/maven2/.lastUpdated=1558755438527
+https\://repo.maven.apache.org/maven2/.error=

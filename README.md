@@ -1755,5 +1755,201 @@ Swagger 是一个规范和完整的框架，用于生成、描述、调用和可
 
 
 
+### 14.1 创建common模块
+
+选中guli_parent项目，创建一个与service同级的项目，common。
+
+![image-20220727120252031](http://typora-imagelist.oss-cn-qingdao.aliyuncs.com/image-20220727120252031.png)
+
+![image-20220727120357118](http://typora-imagelist.oss-cn-qingdao.aliyuncs.com/image-20220727120357118.png)
+
+修改pom文件，增加依赖。
+
+```xml
+    <dependencies>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-web</artifactId>
+            <scope>provided</scope>
+        </dependency>
+        <!--mybatis-plus-->
+        <dependency>
+            <groupId>com.baomidou</groupId>
+            <artifactId>mybatis-plus-boot-starter</artifactId>
+            <scope>provided</scope>
+        </dependency>
+
+        <!--lombok用来简化实体类：需要安装lombok插件-->
+        <dependency>
+            <groupId>org.projectlombok</groupId>
+            <artifactId>lombok</artifactId>
+            <scope>provided</scope>
+        </dependency>
+
+        <!--swagger-->
+        <dependency>
+            <groupId>io.springfox</groupId>
+            <artifactId>springfox-swagger2</artifactId>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>io.springfox</groupId>
+            <artifactId>springfox-swagger-ui</artifactId>
+            <scope>provided</scope>
+        </dependency>
+
+        <!-- redis -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-data-redis</artifactId>
+        </dependency>
+
+        <!-- spring2.X集成redis所需common-pool2
+        <dependency>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-pool2</artifactId>
+            <version>2.6.0</version>
+        </dependency>-->
+    </dependencies>
+```
+
+然后再加上<packaging>pom</packaging>，删除common项目中的src文件夹。
+
+
+
+### 14.2 创建service_base模块
+
+在common模块下创建子模块service_base，并创建配置类SwaggerConfig。
+
+```java
+package com.ama.servicebase.config;
+
+import com.google.common.base.Predicates;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import springfox.documentation.builders.ApiInfoBuilder;
+import springfox.documentation.builders.PathSelectors;
+import springfox.documentation.service.ApiInfo;
+import springfox.documentation.service.Contact;
+import springfox.documentation.spi.DocumentationType;
+import springfox.documentation.spring.web.plugins.Docket;
+import springfox.documentation.swagger2.annotations.EnableSwagger2;
+
+/**
+ * 2022/7/27 12:17
+ *
+ * @Description Swagger配置类
+ * @Author WangWenZhe
+ */
+@Configuration
+@EnableSwagger2//Swagger注解
+public class SwaggerConfig {
+
+    @Bean
+    public Docket webApiConfig() {
+        return new Docket(DocumentationType.SWAGGER_2)
+                .groupName("webApi")
+                .apiInfo(webApiInfo())
+                .select()
+                .paths(Predicates.not(PathSelectors.regex("/admin/.*")))
+                .paths(Predicates.not(PathSelectors.regex("/error.*")))
+                .build();
+
+    }
+
+    private ApiInfo webApiInfo() {
+
+        return new ApiInfoBuilder()
+                .title("网站-课程中心API文档")
+                .description("本文档描述了课程中心微服务接口定义")
+                .version("1.0")
+                .contact(new Contact("Helen", "http://atguigu.com",
+                        "55317332@qq.com"))
+                .build();
+    }
+}
+```
+
+在service项目中修改pom文件，引入service_base的依赖。
+
+```xml
+        <dependency>
+            <groupId>com.ama</groupId>
+            <artifactId>service_base</artifactId>
+            <version>0.0.1-SNAPSHOT</version>
+        </dependency>
+```
+
+修改service_edu的启动类，增加注解@ComponentScan，项目启动时，使其能够扫描到bean。
+
+```java
+@ComponentScan(basePackages = {"com.ama"})
+```
+
+
+
+### 14.3 启动测试
+
+启动service_edu项目，访问地址http://localhost:8001/swagger-ui.html
+
+![image-20220727154945827](http://typora-imagelist.oss-cn-qingdao.aliyuncs.com/image-20220727154945827.png)
+
+
+
+### 14.4 定义接口说明和参数说明
+
+定义在类上：@Api
+
+定义在方法上：@ApiOperation
+
+定义在参数上：@ApiParam
+
+```java
+@Api(description = "讲师管理")
+@RestController
+@RequestMapping("/eduService/teacher")
+public class EduTeacherController {
+```
+
+```java
+/**
+     * 查询讲师表所有数据
+     */
+    @ApiOperation(value = "查询讲师表所有数据")
+    @RequestMapping("findAll")
+    public List<EduTeacher> findAllTeacherList() {
+        //调用service层的方法，实现查询所有的操作
+        List<EduTeacher> list = eduTeacherService.list(null);
+        return list;
+    }
+    //endregion
+
+    //region 逻辑删除
+
+    /**
+     * 逻辑删除
+     */
+    @ApiOperation(value = "逻辑删除讲师")
+    @DeleteMapping("{id}")
+    public boolean deleteTeacherById(@ApiParam(name = "id", value = "讲师ID", required = true) @PathVariable String id) {
+        //调用service层的方法，实现逻辑删除操作
+        boolean flag = eduTeacherService.removeById(id);
+        return flag;
+    }
+
+    //endregion
+```
+
+
+
+### 14.5 总结
+
+**步骤总结：**
+
+1. 在父工程guli_parent下创建一个子模块，common项目。并修改pom文件，引入依赖。同时删除common项目下的src文件。
+2. 在common项目下，再创建一个子模块，service_base项目。同时在service_base项目内新建SwaggerConfig类。
+3. 在service项目内，修改pom文件，引入service_base依赖。
+4. 修改service_edu项目的启动类，增加注解@ComponentScan，使其启动时能够扫描到bean。
+
 
 
