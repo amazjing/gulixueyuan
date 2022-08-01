@@ -1,5 +1,6 @@
 package eduservice;
 
+import com.ama.eduservice.entity.EduTeacher;
 import com.baomidou.mybatisplus.annotation.DbType;
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.generator.AutoGenerator;
@@ -10,6 +11,8 @@ import com.baomidou.mybatisplus.generator.config.StrategyConfig;
 import com.baomidou.mybatisplus.generator.config.rules.DateType;
 import com.baomidou.mybatisplus.generator.config.rules.NamingStrategy;
 import org.junit.Test;
+
+import java.util.Optional;
 
 /**
  * 2022/7/26 23:46
@@ -74,4 +77,5 @@ public class CodeGenerator {
         // 6、执行
         mpg.execute();
     }
+
 }

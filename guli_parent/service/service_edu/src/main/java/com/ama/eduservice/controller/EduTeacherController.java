@@ -10,11 +10,13 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
+import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Optional;
 
 
 /**
@@ -146,5 +148,22 @@ public class EduTeacherController {
     }
 
     //endregion
+
+    /**
+     * 测试实体类是否位null
+     */
+    @PostMapping("test")
+    public void test(@RequestBody EduTeacher eduTeacher) {
+        if (eduTeacher.getCareer().equals("")&&eduTeacher.getName()!=null) {
+            System.out.println("1");
+        }
+        if (Optional.ofNullable(eduTeacher.getId()).isPresent()) {
+            System.out.println("2");
+        }
+        if(Optional.empty().isPresent()){
+            System.out.println("3");
+        }
+
+    }
 }
 
