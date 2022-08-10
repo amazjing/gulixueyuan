@@ -2330,4 +2330,125 @@ public class TeacherQuery {
 
 
 
-## 17. 
+## 17. 讲师新增功能
+
+### 17.1 创建自动填充类
+
+在**service-base**模块中添加创建包**handler**，创建自动填充类 **MyMetaObjectHandler**
+
+```java
+package com.ama.servicebase.handler;
+
+import com.baomidou.mybatisplus.core.handlers.MetaObjectHandler;
+import org.apache.ibatis.reflection.MetaObject;
+import org.springframework.stereotype.Component;
+
+import java.util.Date;
+
+/**
+ * 2022/8/10 19:22
+ *
+ * @Description
+ * @Author WangWenZhe
+ */
+@Component
+public class MyMetaObjectHandler implements MetaObjectHandler {
+
+    @Override
+    public void insertFill(MetaObject metaObject) {
+        //属性名称，不是字段名称
+        this.setFieldValByName("gmtCreate", new Date(), metaObject);
+        this.setFieldValByName("gmtModified", new Date(), metaObject);
+    }
+
+    @Override
+    public void updateFill(MetaObject metaObject) {
+        this.setFieldValByName("gmtModified", new Date(), metaObject);
+    }
+}
+```
+
+
+
+
+
+
+
+### 17.2 增加自动填充注解
+
+在实体类中的创建时间gmtCreate与更新时间gmtModified属性增加注解
+
+```java
+@TableField(fill = FieldFill.INSERT)
+@ApiModelProperty(value = "创建时间")
+private Date gmtCreate;
+
+@TableField(fill = FieldFill.INSERT_UPDATE)
+@ApiModelProperty(value = "更新时间")
+private Date gmtModified;
+```
+
+
+
+### 17.3 Controller层
+
+```java
+/**
+     * 添加讲师
+     *
+     * @param eduTeacher
+     * @return
+     */
+    @ApiOperation(value = "新增讲师")
+    @PostMapping("addTeacher")
+    public R addTeacher(@RequestBody EduTeacher eduTeacher) {
+        boolean flag = eduTeacherService.save(eduTeacher);
+        if (flag) {
+            return R.ok();
+        } else {
+            return R.error();
+        }
+    }
+```
+
+
+
+## 18. 讲师修改功能
+
+```java
+    /**
+     * 根据讲师id进行查询
+     *
+     * @param id 讲师id
+     * @return
+     */
+    @ApiOperation(value = "根据讲师id进行查询")
+    @GetMapping("getTeacherById/{id}")
+    public R updateTeacher(@PathVariable String id) {
+        EduTeacher teacher = eduTeacherService.getById(id);
+        return R.ok().data("teacher", teacher);
+    }
+
+
+    /**
+     * 根据讲师id进行修改
+     *
+     * @param eduTeacher
+     * @return
+     */
+    @ApiOperation(value = "根据讲师id进行修改")
+    @PostMapping("updateTeacher")
+    public R updateTeacher(@RequestBody EduTeacher eduTeacher) {
+        boolean flag = eduTeacherService.updateById(eduTeacher);
+        if (flag) {
+            return R.ok();
+        } else {
+            return R.error();
+        }
+    }
+```
+
+
+
+## 19. 统一异常处理
+

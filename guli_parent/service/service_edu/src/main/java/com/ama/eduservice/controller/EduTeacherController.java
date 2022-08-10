@@ -149,21 +149,62 @@ public class EduTeacherController {
 
     //endregion
 
-    /**
-     * 测试实体类是否位null
-     */
-    @PostMapping("test")
-    public void test(@RequestBody EduTeacher eduTeacher) {
-        if (eduTeacher.getCareer().equals("")&&eduTeacher.getName()!=null) {
-            System.out.println("1");
-        }
-        if (Optional.ofNullable(eduTeacher.getId()).isPresent()) {
-            System.out.println("2");
-        }
-        if(Optional.empty().isPresent()){
-            System.out.println("3");
-        }
 
+    //region 添加讲师接口方法
+
+    /**
+     * 添加讲师
+     *
+     * @param eduTeacher
+     * @return
+     */
+    @ApiOperation(value = "新增讲师")
+    @PostMapping("addTeacher")
+    public R addTeacher(@RequestBody EduTeacher eduTeacher) {
+        boolean flag = eduTeacherService.save(eduTeacher);
+        if (flag) {
+            return R.ok();
+        } else {
+            return R.error();
+        }
+    }
+
+    //endregion
+
+    //region 根据讲师id进行查询
+
+    /**
+     * 根据讲师id进行查询
+     *
+     * @param id 讲师id
+     * @return
+     */
+    @ApiOperation(value = "根据讲师id进行查询")
+    @GetMapping("getTeacherById/{id}")
+    public R updateTeacher(@PathVariable String id) {
+        EduTeacher teacher = eduTeacherService.getById(id);
+        return R.ok().data("teacher", teacher);
+    }
+
+    //endregion
+
+    //region 根据讲师id进行修改
+
+    /**
+     * 根据讲师id进行修改
+     *
+     * @param eduTeacher
+     * @return
+     */
+    @ApiOperation(value = "根据讲师id进行修改")
+    @PostMapping("updateTeacher")
+    public R updateTeacher(@RequestBody EduTeacher eduTeacher) {
+        boolean flag = eduTeacherService.updateById(eduTeacher);
+        if (flag) {
+            return R.ok();
+        } else {
+            return R.error();
+        }
     }
 }
 
