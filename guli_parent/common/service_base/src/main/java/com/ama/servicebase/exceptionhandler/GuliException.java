@@ -26,4 +26,9 @@ public class GuliException extends RuntimeException {
      */
     private String msg;
 
+    @Override
+    public String toString() {
+        return "GuliException{" + "message=" + this.getMessage() + ", code=" + code + '}';
+    }
+
 }
