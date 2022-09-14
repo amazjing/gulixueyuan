@@ -5,6 +5,7 @@ import com.ama.commonutis.config.R;
 import com.ama.eduservice.entity.EduTeacher;
 import com.ama.eduservice.entity.vo.TeacherQuery;
 import com.ama.eduservice.service.EduTeacherService;
+import com.ama.servicebase.exceptionhandler.GuliException;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import io.swagger.annotations.Api;
@@ -206,5 +207,7 @@ public class EduTeacherController {
             return R.error();
         }
     }
+
+
 }
 

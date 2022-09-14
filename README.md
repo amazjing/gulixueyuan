@@ -2484,3 +2484,105 @@ public class GlobalExceptionHandler {
 
 
 
+### 19.2 处理特定异常
+
+在GlobalExceptionHandler类中增加特定异常处理方法
+
+```java
+/**
+     * 特定异常
+     * @param e
+     * @return
+     */
+    @ExceptionHandler(ArithmeticException.class)
+    @ResponseBody//为了返回数据
+    public R error(ArithmeticException e) {
+        e.printStackTrace();
+        return R.error().message("执行了ArithmeticException异常处理...");
+    }
+```
+
+当出现ArithmeticException错误时，会执行执行该方法。
+
+**注意：**
+
+当没有异常处理类中没有执行的特定异常时，执行Exception的异常处理方法。
+
+
+
+### 19.3 自定义异常
+
+**步骤：**
+
+1. 创建自定义异常类，并继承RuntimeException，编写异常属性。
+2. 在统一异常类添加规则。
+3. 执行自定义异常。
+
+
+
+创建自定义异常类
+
+```java
+package com.ama.servicebase.exceptionhandler;
+
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
+/**
+ * 2022/9/14 21:57
+ * 自定义异常
+ *
+ * @Description
+ * @Author WangWenZhe
+ */
+@Data
+@AllArgsConstructor//生成有参数构造方法
+@NoArgsConstructor//生成无参数构造方法
+public class GuliException extends RuntimeException {
+
+    /**
+     * 状态码
+     */
+    private Integer code;
+
+    /**
+     * 异常信息
+     */
+    private String msg;
+
+}
+```
+
+
+
+在GlobalExceptionHandler新增自定义异常方法
+
+```java
+/**
+     * 自定义异常
+     * @param e
+     * @return
+     */
+    @ExceptionHandler(GuliException.class)
+    @ResponseBody
+    public R error(GuliException e) {
+        e.printStackTrace();
+        return R.error().code(e.getCode()).message(e.getMsg());
+    }
+```
+
+
+
+在任意接口添加该测试代码，使用Swagger执行。
+
+```java
+try {
+       int i = 10 / 0;
+    } catch (Exception e) {
+        throw new GuliException(20001, "执行了自定义异常处理...");
+	}
+```
+
+![image-20220914220932703](http://typora-imagelist.oss-cn-qingdao.aliyuncs.com/image-20220914220932703.png)
+
