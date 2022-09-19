@@ -2936,3 +2936,179 @@ public String toString() {
 
 
 ## 21. 前端开发
+
+### 21.1 下载和安装VS Code
+
+下载地址：https://code.visualstudio.com/
+
+
+
+### 21.2 安装插件
+
+为方便后续开发，建议安装如下插件（红色矩形框标记的插件）
+
+![image-20220917104055768](http://typora-imagelist.oss-cn-qingdao.aliyuncs.com/image-20220917104055768.png)
+
+
+
+### 21.3 基本使用
+
+#### 21.3.1 创建项目
+
+vscode本身没有新建项目的选项，所以要先创建一个空的文件夹，如project_xxxx。然后打开vscode，再在vscode里面选择 File -> Open Folder 打开文件夹，这样才可以创建项目。
+
+
+
+#### 21.3.2 保存工作区
+
+打开文件夹后，选择“文件 -> 将工作区另存为...”，为工作区文件起一个名字，存储在刚才的文件夹下即可
+
+**创建项目：**
+
+1. 在本地创建空文件夹
+
+2. 使用vscode打开空文件夹， File -> Open Folder
+
+3. 把文件夹保存成工作区。 文件-> 将工作区另存为
+
+   ![image-20220917193821091](http://typora-imagelist.oss-cn-qingdao.aliyuncs.com/image-20220917193821091.png)
+
+   ![image-20220917193843536](http://typora-imagelist.oss-cn-qingdao.aliyuncs.com/image-20220917193843536.png)
+
+
+
+#### 21.3.3 新建文件夹和网页
+
+![image-20220917104320851](http://typora-imagelist.oss-cn-qingdao.aliyuncs.com/image-20220917104320851.png)
+
+
+
+#### 21.3.4 预览网页
+
+**以文件路径方式打开网页预览**
+
+需要安装“open in browser”插件：文件右键 -> Open In Default Browser
+
+**以服务器方式打开网页预览**
+
+需要安装“Live Server”插件：文件右键 -> Open with Live Server
+
+
+
+#### 21.3.5 设置字体大小
+
+左边栏Manage -> settings -> 搜索 “font” -> Font size
+
+![image-20220917104632082](http://typora-imagelist.oss-cn-qingdao.aliyuncs.com/image-20220917104632082.png)
+
+![image-20220917104704881](http://typora-imagelist.oss-cn-qingdao.aliyuncs.com/image-20220917104704881.png)
+
+
+
+#### 21.3.6 开启完整的Emmet语法支持
+
+设置中搜索 Emmet：启用如下选项，必要时重启vs
+
+![image-20220917104839011](http://typora-imagelist.oss-cn-qingdao.aliyuncs.com/image-20220917104839011.png)
+
+
+
+### 21.4 ECMAScript 6
+
+ECMAScript 6.0（以下简称 ES6）是 JavaScript 语言的下一代标准，已经在 2015 年 6 月正式发布了。它的目标，是使得 JavaScript 语言可以用来编写复杂的大型应用程序，成为企业级开发语言。
+
+
+
+#### 21.4.1 声明变量
+
+在项目中创建es6demo文件夹，再创建`01-let变量作用范围.html`
+
+```html
+<!--
+ * @Date: 2022-09-19 21:15:37
+ * @LastEditors: wwz
+ * @LastEditTime: 2022-09-19 21:28:03
+ * @FilePath: \1010\es6demo\01-let变量作用范围.html
+-->
+<script>
+    // ES6 如何定义变量，定义变量特点
+    //js定义： var a = 1;
+    //es6写定义变量，使用关键字let let a = 10;
+    // var 声明的变量没有局部作用域
+    // let 声明的变量 有局部作用域
+    //1.创建代码块，定义变量
+    {
+        var a = 10
+        let b = 20
+    }
+    //2.在代码块 外面输出
+    console.log(a)  // 10
+    console.log(b) //报错，b is not defined
+</script>
+```
+
+创建`02-let定义变量特点.html`
+
+```html
+<!--
+ * @Date: 2022-09-19 21:25:16
+ * @LastEditors: wwz
+ * @LastEditTime: 2022-09-19 21:28:11
+ * @FilePath: \1010\es6demo\02-let定义变量特点.html
+-->
+<script>
+    var a = 1
+    var a = 2
+
+    let m = 30
+    let m = 40
+
+    console.log(a) // 2
+    console.log(m) // Identifier 'n' has already been declared
+</script>
+```
+
+**var与let的区别：**
+
+- var 声明的变量没有局部作用域
+- let 声明的变量 有局部作用域
+-  var 可以声明多次
+- let 只能声明一次
+
+
+
+#### 21.4.2 const声明常量（只读变量）
+
+创建`const声明常量.html`文件
+
+```html
+<!--
+ * @Date: 2022-09-19 21:31:55
+ * @LastEditors: wwz
+ * @LastEditTime: 2022-09-19 21:37:56
+ * @FilePath: \1010\es6demo\const声明常量.html
+-->
+<script>
+    //定义常量
+    const PI = "3.1415926"
+    //常量值一旦定义，不能修改
+    PI = 3 //报错，Assignment to constant variable.
+
+    //定义常量，必须赋值，进行初始化
+    const AA//报错，Missing initializer in const declaration
+    
+</script>
+```
+
+**常量的特点：**
+
+- 使用关键词`const`定义。
+- 常量值一旦定义，不能修改。
+- 定义常量，必须赋值，进行初始化。
+
+
+
+
+
+
+
