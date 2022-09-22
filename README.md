@@ -3188,6 +3188,28 @@ ECMAScript 6.0（以下简称 ES6）是 JavaScript 语言的下一代标准，�
 
 ### 21.6 声明对象简写
 
+```html
+<script>
+    const age = 12
+    const name = "lucy"
+
+    //传统方式定义对象
+    const p1 = {
+        name: name,
+        age: age
+    }
+    console.log(p1)
+
+    //es6定义对象
+    const p2 = {
+        name,
+        age
+    }
+    console.log(p2)
+
+</script>
+```
+
 
 
 
