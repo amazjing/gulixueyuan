@@ -1,0 +1,22 @@
+<!--
+ * @Date: 2022-10-03 21:37:22
+ * @LastEditors: wwz
+ * @LastEditTime: 2022-10-03 21:44:48
+ * @FilePath: \1010\es6demo\09-对象拓展运算符.html
+-->
+<script>
+    //1.对象复制
+    let person1 = {"name":"lucy","age":20}
+
+    //将person1的所有属性复制到person2中
+    let person2 = {...person1}
+    console.log(person2)
+    
+    //2.对象合并
+    let name =  {name:'mary'}
+    let age = {age:20}
+    //将name和age合并到person3中
+    let person3 = {...name,...age}
+    console.log(person3)
+    
+</script>

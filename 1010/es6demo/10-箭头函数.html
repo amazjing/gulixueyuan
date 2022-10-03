@@ -1,0 +1,30 @@
+<!--
+ * @Date: 2022-10-03 21:46:23
+ * @LastEditors: wwz
+ * @LastEditTime: 2022-10-03 22:06:49
+ * @FilePath: \1010\es6demo\10-箭头函数.html
+-->
+<script>
+    //1. 传统方式创建方法
+    var f1 = function (m) {
+        return m+1;
+    }
+    console.log(f1(2));//3
+    
+    //使用箭头函数改造
+    var f2 = m => m+1;
+    console.log(f2(8));//9
+     
+    // 当箭头函数没有参数或者有多个参数，要用 () 括起来。
+    // 当箭头函数函数体有多行语句，用 {} 包裹起来，表示代码块，
+    // 当只有一行语句，并且需要返回结果时，可以省略 {} , 结果会自动返回。
+    //2. 复杂方法
+    var f3 = function (a,b) {
+        return a+b;
+    }
+    console.log(f3(1,2));//3
+
+    //使用箭头函数改造
+    var f4 = (a,b) => a+b;
+    console.log(f4(3,4));//7
+</script>
