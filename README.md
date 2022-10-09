@@ -3316,5 +3316,119 @@ ECMAScript 6.0（以下简称 ES6）是 JavaScript 语言的下一代标准，�
 
 ## 22. Vue
 
-## 22.1 介绍
+### 22.1 介绍
+
+Vue (读音 /vjuː/，类似于 view) 是一套用于构建用户界面的渐进式框架。
+
+Vue 的核心库只关注视图层，不仅易于上手，还便于与第三方库或既有项目整合。另一方面，当与现代化的工具链以及各种支持类库结合使用时，Vue 也完全能够为复杂的单页应用提供驱动。
+
+官方网站：https://cn.vuejs.org
+
+
+
+### 22.2 初始Vue.js
+
+**步骤：**
+
+1. 创建html页面，使用vscode快捷键生成html代码
+
+2. 引入vue的js文件
+
+   ```html
+   <script src="vue.min.js"></script>
+   ```
+
+3. 在html文件中创建div标签，div添加id属性
+
+   ```html
+   <div id="app"></div>
+   ```
+
+4. 编写vue代码，固定的结构
+
+   ```html
+   <script>
+           //创建一个Vue对象
+           new Vue({
+               el:'#app',//绑定vue作用范围
+               data:{//定义页面中显示的模型数据
+                   message:'Hello vue'
+               }
+           })
+       </script>
+   ```
+
+5. 使用插值表达式获取data里面定义的值
+
+   ```html
+   <div id="app">
+           <!-- 插值表达式 -->
+           <!-- {{}} 插值表达式，绑定vue中的data数据-->
+           {{message}}
+       </div>
+   ```
+
+   
+
+创建一个vuedemo文件夹，然后创建01 vue入门.html文件，在文件中输入`!`，生成html代码。
+
+![image-20221009195525525](http://typora-imagelist.oss-cn-qingdao.aliyuncs.com/image-20221009195525525.png)
+
+![image-20221009195541809](http://typora-imagelist.oss-cn-qingdao.aliyuncs.com/image-20221009195541809.png)
+
+将教学源文件-3-前端相关资源-前端资料-vue-vue.min.js文件拷贝到vuedemo文件夹内。
+
+![image-20221009200148969](http://typora-imagelist.oss-cn-qingdao.aliyuncs.com/image-20221009200148969.png)
+
+
+
+**创建代码片段:**
+
+文件 => 首选项 => 用户代码片段 => 新建全局代码片段/或文件夹代码片段：vue-html.code-snippets
+
+**注意：制作代码片段的时候，字符串中如果包含文件中复制过来的“Tab”键的空格，要换成空格键的空格**
+
+```html
+{
+	"vue html": {
+		"scope": "html",
+		"prefix": "vuehtml",
+		"body": [
+			"<!DOCTYPE html>",
+			"<html lang=\"en\">",
+			"",
+			"<head>",
+			"	<meta charset=\"UTF-8\">",
+			" 	<meta name=\"viewport\" content=\"width=device-width, initial￾scale=1.0\">",
+			" 	<meta http-equiv=\"X-UA-Compatible\" content=\"ie=edge\">",
+			" 	<title>Document</title>",
+			"</head>",
+			"",
+			"<body>",
+			" 	<div id=\"app\">",
+			"",
+			" 	</div>",
+			" 	<script src=\"vue.min.js\"></script>",
+			" 	<script>",
+			" 		new Vue({",
+			" 			el: '#app',",
+			" 			data: {",
+			" 				$1",
+			" 			}",
+			" 		})",
+			" 	</script>",
+			"</body>",
+			"",
+			"</html>",
+		],
+		"description": "my vue template in html"
+	}
+}
+```
+
+
+
+### 22.3 基本语法
+
+#### 22.3.1 基本数据渲染和指令
 

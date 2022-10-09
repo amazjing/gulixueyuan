@@ -1,0 +1,35 @@
+<!--
+ * @Date: 2022-10-09 19:52:16
+ * @LastEditors: wwz
+ * @LastEditTime: 2022-10-09 20:10:09
+ * @FilePath: \1010\vuedemo\01 vue入门.html
+-->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <div id="app">
+        <!-- 插值表达式 -->
+        <!-- {{}} 插值表达式，绑定vue中的data数据-->
+        {{message}}
+    </div>
+    <!-- vue.js -->
+    <script src="vue.min.js"></script>
+
+    <script>
+        //创建一个Vue对象
+        new Vue({
+            el:'#app',//绑定vue作用范围
+            data:{//定义页面中显示的模型数据
+                message:'Hello vue'
+            }
+        })
+    </script>
+
+</body>
+</html>
