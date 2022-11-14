@@ -1,0 +1,51 @@
+<!--
+ * @Date: 2022-11-14 22:22:32
+ * @LastEditors: wwz
+ * @LastEditTime: 2022-11-14 22:39:12
+ * @FilePath: \1010\vuedemo\05 vue事件操作.html
+-->
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial￾scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>vue事件操作</title>
+</head>
+
+<body>
+    <div id="app">
+        <!-- vue绑定事件 -->
+        <button v-on:click="search()">查询</button>
+        <!-- 简写方式 -->
+        <button @click="search()">[简写]查询</button>
+
+        <p>您要查询的是：{{searchMap.keyWord}}</p>
+        <p><a v-bind:href="result.site" target="_blank">{{result.title}}</a></p>
+    </div>
+    <script src="vue.min.js"></script>
+    <script>
+        new Vue({
+            el: '#app',
+            data: {
+                searchMap: {
+                    keyWord: '尚硅谷'
+                },
+                //查询结果
+                result:{}
+            },
+            methods:{//定义多个方法
+                search(){
+                    console.log("search方法被调用了");
+                    this.result = {
+                    "title":"尚硅谷",
+                    "site":"http://www.atguigu.com"
+                    }
+                }
+            }
+        })
+    </script>
+</body>
+
+</html>

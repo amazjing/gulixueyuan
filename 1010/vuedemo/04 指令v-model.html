@@ -1,0 +1,35 @@
+<!--
+ * @Date: 2022-11-14 22:07:49
+ * @LastEditors: wwz
+ * @LastEditTime: 2022-11-14 22:14:58
+ * @FilePath: \1010\vuedemo\04 指令v-model.html
+-->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <div id = "app">
+        <!-- 单项绑定 -->
+        单项绑定:<input type="text" v-bind:value="searchMap.keyword"/>
+        <!-- 双向绑定 -->
+        双向绑定:<input type="text" v-model="searchMap.keyword"/>
+        <p>{{searchMap.keyword}}</p>
+    </div>
+    <script src="vue.min.js"></script>
+    <script>
+        new Vue({
+            el: "#app",
+            data:{
+                searchMap:{
+                    keyword:'尚硅谷'
+                }
+            }
+        })
+    </script>
+</body>
+</html>

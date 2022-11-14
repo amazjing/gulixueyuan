@@ -3432,3 +3432,132 @@ Vue 的核心库只关注视图层，不仅易于上手，还便于与第三方�
 
 #### 22.3.1 基本数据渲染和指令
 
+创建03 指令v-bind.html文件
+
+**v-bind** 特性被称为指令。指令带有前缀 **v-**
+
+除了使用插值表达式{{}}进行数据渲染，也可以使用 v-bind指令，它的简写的形式就是一个**冒号（:）**
+
+```HTML
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <div id = "app">
+        <!-- v-bind指令
+        单项数据绑定
+        这个指令一般用在标签的属性里面，获取值
+        -->
+        <h1 v-bind:title="message">
+            {{content}}
+        </h1>
+        <!-- 简写方式 -->
+        <h1 :title="message">
+            {{content}}
+        </h1>
+    </div>
+    <script src="vue.min.js"></script>
+    <script>
+        new Vue({
+            el: "#app",
+            data:{
+                content:"我是标题",
+                message :'页面加载于 ' + new Date().toLocaleString()
+            }
+        })
+    </script>
+</body>
+</html>
+```
+
+**效果：**
+
+![image-20221114213720063](http://typora-imagelist.oss-cn-qingdao.aliyuncs.com/image-20221114213720063.png)
+
+
+
+#### 22.3.2 双向数据绑定
+
+创建04 指令v-model.html
+
+双向数据绑定和单向数据绑定：使用**v-model**进行双向数据绑定
+
+```html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <div id = "app">
+        <!-- 单项绑定 -->
+        单项绑定:<input type="text" v-bind:value="searchMap.keyword"/>
+        <!-- 双向绑定 -->
+        双向绑定:<input type="text" v-model="searchMap.keyword"/>
+        <p>{{searchMap.keyword}}</p>
+    </div>
+    <script src="vue.min.js"></script>
+    <script>
+        new Vue({
+            el: "#app",
+            data:{
+                searchMap:{
+                    keyword:'尚硅谷'
+                }
+            }
+        })
+    </script>
+</body>
+</html>
+```
+
+**效果：**
+
+1. 单项绑定在输入框输入信息，**只会改变当前的输入框内容**
+2. 双向绑定在输入框输入信息，**一个地方变别的地方也会跟着改变**
+
+
+
+
+
+![image-20221114221544512](http://typora-imagelist.oss-cn-qingdao.aliyuncs.com/image-20221114221544512.png)
+
+![image-20221114221609641](http://typora-imagelist.oss-cn-qingdao.aliyuncs.com/image-20221114221609641.png)
+
+
+
+#### 22.3.3 事件
+
+需求：点击查询按钮，按照输入框中输入的内容查找公司相关信息
+
+在前面的例子基础上，data节点中增加 result，增加 methods节点 并定义 search方法
+
+
+
+
+
+html中增加 button 和 p
+
+使用 **v-on** 进行数件处理，**v-on:click** 表示处理鼠标点击事件，事件调用的方法定义在 vue 对象声明
+
+的 methods 节点中
+
+```html
+<!-- v-on 指令绑定事件，click指定绑定的事件类型，事件发生时调用vue中methods节点中定义的
+方法 -->
+<button v-on:click="search()">查询</button>
+<p>您要查询的是：{{searchMap.keyWord}}</p>
+<p><a v-bind:href="result.site" target="_blank">{{result.title}}</a></p>
+```
+
+
+
+![image-20221114223358720](http://typora-imagelist.oss-cn-qingdao.aliyuncs.com/image-20221114223358720.png)
