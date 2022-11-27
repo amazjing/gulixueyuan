@@ -1,0 +1,58 @@
+<!--
+ * @Date: 2022-11-27 17:04:52
+ * @LastEditors: wwz
+ * @LastEditTime: 2022-11-27 17:51:55
+ * @FilePath: \1010\vuedemo\08 vue指令v-for.html
+-->
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial￾scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>08 vue指令v-for</title>
+</head>
+
+<!-- 实现：从1到10，遍历输出-->
+<body>
+    <div id="app">
+        <ul>
+            <!-- 无序 -->
+            <li v-for="n in 10">{{n}}</li>
+        </ul>
+
+        <ol>
+            <!-- 有序 -->
+            <li v-for="(n,index) in 10">数字：{{n}}-------索引下标：{{index}}</li>
+        </ol>
+
+        <!-- 水平线标签 -->
+        <hr/>
+
+        <table border="1">
+            <tr v-for="user in userList">
+                <td>{{user.id}}</td>
+                <td>{{user.username}}</td>
+                <td>{{user.age}}</td>
+            </tr>
+        </table>
+    </div>
+    <script src="vue.min.js"></script>
+    <script>
+        new Vue({
+            el: '#app',
+            data: {
+                userList:[
+                    {id:1,username:'tom',age:18},
+                    {id:2,username:'jerry',age:19},
+                    {id:3,username:'kitty',age:20},
+                    {id:4,username:'lucy',age:21},
+                    {id:5,username:'lily',age:22},
+                ]
+            }
+        })
+    </script>
+</body>
+
+</html>

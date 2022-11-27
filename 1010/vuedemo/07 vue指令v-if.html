@@ -1,0 +1,36 @@
+<!--
+ * @Date: 2022-11-27 16:50:58
+ * @LastEditors: wwz
+ * @LastEditTime: 2022-11-27 16:59:57
+ * @FilePath: \1010\vuedemo\07 vue指令v-if.html
+-->
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial￾scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>07 vue指令v-if</title>
+</head>
+
+<body>
+    <div id="app">
+        <input type="checkbox" v-model="ok"/>是否同意
+        <!-- v:if条件指令：还有v-else、v-else-if 切换开销大 -->
+        <!-- 选中则显示尚硅谷，不选中则显示谷粒学苑 -->
+        <h1 v-if="ok">尚硅谷</h1>
+        <h1 v-else>谷粒学苑</h1>
+    </div>
+    <script src="vue.min.js"></script>
+    <script>
+        new Vue({
+            el: '#app',
+            data: {
+                ok:false
+            }
+        })
+    </script>
+</body>
+
+</html>

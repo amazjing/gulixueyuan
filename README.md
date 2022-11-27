@@ -3432,7 +3432,7 @@ Vue 的核心库只关注视图层，不仅易于上手，还便于与第三方�
 
 #### 22.3.1 基本数据渲染和指令
 
-创建03 指令v-bind.html文件
+> 创建：03 指令v-bind.html文件
 
 **v-bind** 特性被称为指令。指令带有前缀 **v-**
 
@@ -3483,7 +3483,7 @@ Vue 的核心库只关注视图层，不仅易于上手，还便于与第三方�
 
 #### 22.3.2 双向数据绑定
 
-创建04 指令v-model.html
+>  创建：04 指令v-model.html
 
 双向数据绑定和单向数据绑定：使用**v-model**进行双向数据绑定
 
@@ -3546,7 +3546,7 @@ Vue 的核心库只关注视图层，不仅易于上手，还便于与第三方�
 
 html中增加 button 和 p
 
-使用 **v-on** 进行数件处理，**v-on:click** 表示处理鼠标点击事件，事件调用的方法定义在 vue 对象声明
+使用 **v-on** 进行事件处理，**v-on:click** 表示处理鼠标点击事件，事件调用的方法定义在 vue 对象声明
 
 的 methods 节点中
 
@@ -3561,3 +3561,215 @@ html中增加 button 和 p
 
 
 ![image-20221114223358720](http://typora-imagelist.oss-cn-qingdao.aliyuncs.com/image-20221114223358720.png)
+
+
+
+#### 22.3.4 修饰符
+
+>  创建：06 vue修饰符.html
+
+**.prevent** 修饰符告诉 v-on 指令对于触发的事件调用 event.preventDefault()：即阻止事件原本的默认行为
+
+```html
+<!--
+ * @Date: 2022-11-27 16:31:07
+ * @LastEditors: wwz
+ * @LastEditTime: 2022-11-27 16:43:25
+ * @FilePath: \1010\vuedemo\06 vue修饰符.html
+-->
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial￾scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+</head>
+
+<body>
+    <div id="app">
+        <!-- 修饰符用于指出一个指令应该以特殊方式绑定。
+            这里的 .prevent 修饰符告诉 v-on 指令对于触发的事件调用js的event.preventDefault()：
+            即阻止表单提交的默认行为 -->
+        <form action="save" v-on:submit.prevent="onSubmit">
+           <input type="text" id="name" v-model="user.username"/>
+           <button type="submit">保存</button> 
+        </form>
+    </div>
+    <script src="vue.min.js"></script>
+    <script>
+        new Vue({
+            el: '#app',
+            data: {
+                user:{}
+            },
+            methods:{
+                onSubmit(){
+                    if(this.user.username){
+                        console.log('提交表单');
+                    }else{
+                        alert('请输入用户名');
+                    }
+                }
+            }
+        })
+    </script>
+</body>
+
+</html>
+```
+
+
+
+**效果：**
+
+![image-20221127164633152](http://typora-imagelist.oss-cn-qingdao.aliyuncs.com/image-20221127164633152.png)
+
+![image-20221127164743642](http://typora-imagelist.oss-cn-qingdao.aliyuncs.com/image-20221127164743642.png)
+
+
+
+#### 22.3.5 条件渲染
+
+> 创建：07 vue指令v-if.html
+
+
+
+```html
+<!--
+ * @Date: 2022-11-27 16:50:58
+ * @LastEditors: wwz
+ * @LastEditTime: 2022-11-27 16:59:57
+ * @FilePath: \1010\vuedemo\07 vue指令v-if.html
+-->
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial￾scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>07 vue指令v-if</title>
+</head>
+
+<body>
+    <div id="app">
+        <input type="checkbox" v-model="ok"/>是否同意
+        <!-- v:if条件指令：还有v-else、v-else-if 切换开销大 -->
+        <!-- 选中则显示尚硅谷，不选中则显示谷粒学苑 -->
+        <h1 v-if="ok">尚硅谷</h1>
+        <h1 v-else>谷粒学苑</h1>
+    </div>
+    <script src="vue.min.js"></script>
+    <script>
+        new Vue({
+            el: '#app',
+            data: {
+                ok:false
+            }
+        })
+    </script>
+</body>
+
+</html>
+```
+
+
+
+![image-20221127165849061](http://typora-imagelist.oss-cn-qingdao.aliyuncs.com/image-20221127165849061.png)
+
+
+
+**v-show**：条件指令；使用v-show完成和上面相同的功能。
+
+```vue
+<!-- v:show 条件指令 初始渲染开销大 -->
+<h1 v-show="ok">show：Lorem ipsum dolor sit amet.</h1>
+<h1 v-show="!ok">no</h1>
+```
+
+- v-if 是“真正”的条件渲染，因为它会确保在切换过程中条件块内的事件监听器和子组件适当地被销毁和重建。
+- v-if 也是**惰性的**：如果在初始渲染时条件为假，则什么也不做——直到条件第一次变为真时，才会开始渲染条件块。
+- 相比之下，v-show 就简单得多——不管初始条件是什么，元素总是会被渲染，并且只是简单地基于 CSS 进行切换。
+- 一般来说，v-if 有更高的切换开销，而 v-show 有更高的初始渲染开销。因此，如果需要非常频繁地切换，则使用 v-show 较好；如果在运行时条件很少改变，则使用 v-if 较好。
+
+
+
+#### 22.3.6 列表渲染
+
+> 创建08 vue指令v-for.html
+
+```vue
+<!--
+ * @Date: 2022-11-27 17:04:52
+ * @LastEditors: wwz
+ * @LastEditTime: 2022-11-27 17:51:55
+ * @FilePath: \1010\vuedemo\08 vue指令v-for.html
+-->
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial￾scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>08 vue指令v-for</title>
+</head>
+
+<!-- 实现：从1到10，遍历输出-->
+<body>
+    <div id="app">
+        <ul>
+            <!-- 无序 -->
+            <li v-for="n in 10">{{n}}</li>
+        </ul>
+
+        <ol>
+            <!-- 有序 -->
+            <li v-for="(n,index) in 10">数字：{{n}}-------索引下标：{{index}}</li>
+        </ol>
+
+        <!-- 水平线标签 -->
+        <hr/>
+
+        <table border="1">
+            <tr v-for="user in userList">
+                <td>{{user.id}}</td>
+                <td>{{user.username}}</td>
+                <td>{{user.age}}</td>
+            </tr>
+        </table>
+    </div>
+    <script src="vue.min.js"></script>
+    <script>
+        new Vue({
+            el: '#app',
+            data: {
+                userList:[
+                    {id:1,username:'tom',age:18},
+                    {id:2,username:'jerry',age:19},
+                    {id:3,username:'kitty',age:20},
+                    {id:4,username:'lucy',age:21},
+                    {id:5,username:'lily',age:22},
+                ]
+            }
+        })
+    </script>
+</body>
+
+</html>
+```
+
+**效果：**
+
+![image-20221127175355173](http://typora-imagelist.oss-cn-qingdao.aliyuncs.com/image-20221127175355173.png)
+
+
+
+
+
+
+
+### 22.4 组件
+
