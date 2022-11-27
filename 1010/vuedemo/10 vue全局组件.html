@@ -1,0 +1,36 @@
+<!--
+ * @Date: 2022-11-27 19:37:47
+ * @LastEditors: wwz
+ * @LastEditTime: 2022-11-27 19:39:35
+ * @FilePath: \1010\vuedemo\10 vue全局组件.html
+-->
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial￾scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>10 vue全局组件</title>
+</head>
+
+<!-- 实现：因为自己定义的全局组件Navbar.js -->
+<body>
+    <div id="app">
+        <!-- 使用标签直接引入 -->
+        <Navbar></Navbar>
+    </div>
+    <script src="vue.min.js"></script>
+    <!-- 引入Navbar.js -->
+    <script src="components/Navbar.js"></script>
+    <script>
+        new Vue({
+            el: '#app',
+            data: {
+                
+            }
+        })
+    </script>
+</body>
+
+</html>

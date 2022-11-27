@@ -3773,3 +3773,134 @@ html中增加 button 和 p
 
 ### 22.4 组件
 
+组件（Component）是 Vue.js 最强大的功能之一。
+
+组件可以扩展 HTML 元素，封装可重用的代码。
+
+组件系统让我们可以用独立可复用的小组件来构建大型应用，几乎任意类型的应用的界面都可以抽象为一个组件树：
+
+![image-20221127191906762](http://typora-imagelist.oss-cn-qingdao.aliyuncs.com/image-20221127191906762.png)
+
+
+
+#### 22.4.1 局部组件
+
+> 09 vue组件.html
+
+**实现：局部自定义组件**
+
+```vue
+<!--
+ * @Date: 2022-11-27 19:20:44
+ * @LastEditors: wwz
+ * @LastEditTime: 2022-11-27 19:30:06
+ * @FilePath: \1010\vuedemo\09 vue组件.html
+-->
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial￾scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>09 vue组件</title>
+</head>
+
+<body>
+    <div id="app">
+        <!-- 引入组件 -->
+        <Navabar></Navbar>
+    </div>
+    <script src="vue.min.js"></script>
+    <script>
+        new Vue({
+            el: '#app',
+            //定义vue使用的组件
+            components:{
+                //组件的名字
+                'Navabar':{
+                    //组件的内容
+                    template:'<ul><li>首页</li><li>学员管理</li></ul>'
+                }
+            }
+        })
+    </script>
+</body>
+
+</html>
+```
+
+**效果：**
+
+![image-20221127192933964](http://typora-imagelist.oss-cn-qingdao.aliyuncs.com/image-20221127192933964.png)
+
+
+
+#### 22.4.2 全局组件
+
+在vuedemo文件路径下创建components文件夹，然后再创建Navbar.js
+
+```js
+/*
+ * @Date: 2022-11-27 19:34:06
+ * @LastEditors: wwz
+ * @LastEditTime: 2022-11-27 19:36:18
+ * @FilePath: \1010\vuedemo\components\Navbar.js
+ */
+//定义全局组件
+Vue.component('Navbar', {
+    template: '<ul><li>首页</li><li>学员管理</li><li>讲师管理</li></ul>'
+})
+```
+
+> 创建10 vue全局组件.html
+
+```vue
+<!--
+ * @Date: 2022-11-27 19:37:47
+ * @LastEditors: wwz
+ * @LastEditTime: 2022-11-27 19:39:35
+ * @FilePath: \1010\vuedemo\10 vue全局组件.html
+-->
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial￾scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>10 vue全局组件</title>
+</head>
+
+<!-- 实现：因为自己定义的全局组件Navbar.js -->
+<body>
+    <div id="app">
+        <!-- 使用标签直接引入 -->
+        <Navbar></Navbar>
+    </div>
+    <script src="vue.min.js"></script>
+    <!-- 引入Navbar.js -->
+    <script src="components/Navbar.js"></script>
+    <script>
+        new Vue({
+            el: '#app',
+            data: {
+                
+            }
+        })
+    </script>
+</body>
+
+</html>
+```
+
+**效果：**
+
+![image-20221127194257193](http://typora-imagelist.oss-cn-qingdao.aliyuncs.com/image-20221127194257193.png)
+
+
+
+### 22.5 实例生命周期
+
+![20210217172407410](http://typora-imagelist.oss-cn-qingdao.aliyuncs.com/20210217172407410.png)
+
